@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: PlannerDB
+    image: postgres:12.3
+    ports:
+      - "5432:${DB_PORT}"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    env_file:
+      - .env
+
+volumes:
+  db:

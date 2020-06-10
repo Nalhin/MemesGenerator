@@ -1,0 +1,5 @@
+{
+  "preset": "jest-preset-angular",
+  "setupFilesAfterEnv": ["<rootDir>/test/setup.ts"],
+  "testMatch": ["**/+(*.)+(spec).+(ts)"]
+}
