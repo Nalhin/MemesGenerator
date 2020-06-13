@@ -1,6 +1,5 @@
 package com.memes.auth;
 
-import com.memes.auth.dto.RegisterUserDto;
 import com.memes.user.User;
 import com.memes.user.UserService;
 import org.springframework.security.authentication.AuthenticationManager;

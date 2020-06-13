@@ -1,13 +1,12 @@
 package com.memes.config;
 
-import com.memes.auth.AuthUserDetailsService;
 import com.memes.auth.JwtAuthorizationFilter;
 import com.memes.auth.JwtService;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,13 +31,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.authorizeRequests()
-        .antMatchers("/auth/**")
+        .antMatchers("/auth/**", "/api/users/all")
         .permitAll()
         .anyRequest()
         .authenticated()
         .and()
         .addFilterBefore(
             new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+  }
+
+  @Override
+  public void configure(WebSecurity web) {
+    web.ignoring()
+        .antMatchers("/v2/api-docs")
+        .antMatchers("/swagger-resources/**")
+        .antMatchers("/swagger-ui.html")
+        .antMatchers("/configuration/**")
+        .antMatchers("/webjars/**");
   }
 
   @Bean

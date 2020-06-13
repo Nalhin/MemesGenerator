@@ -1,19 +1,23 @@
 package com.memes.user;
 
 import com.memes.user.dto.UserResponseDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping(path = "/user")
+@RestController
+@RequestMapping(path = "/api/users")
+@Api(tags = "users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -21,6 +25,7 @@ public class UserController {
   private final ModelMapper modelMapper;
 
   @GetMapping(path = "/all")
+  @ApiOperation(value = "Get users")
   public @ResponseBody List<UserResponseDto> getAll() {
     return this.userService.findAll().stream()
         .map(u -> modelMapper.map(u, UserResponseDto.class))
@@ -28,6 +33,9 @@ public class UserController {
   }
 
   @GetMapping(path = "/me")
+  @ApiOperation(
+      value = "Get current user",
+      authorizations = {@Authorization(value = "Bearer %token")})
   public @ResponseBody UserResponseDto me(Principal principal) {
     User user = userService.findOneByUsername(principal.getName()).orElse(new User());
     return modelMapper.map(user, UserResponseDto.class);
