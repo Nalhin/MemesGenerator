@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
 public class AuthUserDetailsService implements UserDetailsService {
 
@@ -22,13 +24,15 @@ public class AuthUserDetailsService implements UserDetailsService {
         .findOneByUsername(username)
         .map(
             (user) ->
-                User.withUsername(user.getUsername())
+                AuthUser.authUserBuilder()
+                    .username(user.getUsername())
+                    .id(user.getId())
                     .password(user.getPassword())
-                    .authorities("WRITE_PRIVILEGE")
-                    .accountExpired(false)
-                    .accountLocked(false)
-                    .credentialsExpired(false)
-                    .disabled(false)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .enabled(true)
+                    .authorities(Collections.emptyList())
                     .build())
         .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
   }

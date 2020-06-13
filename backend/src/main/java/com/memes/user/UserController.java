@@ -1,17 +1,18 @@
 package com.memes.user;
 
+import com.memes.auth.AuthUser;
 import com.memes.user.dto.UserResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class UserController {
   private final UserService userService;
   private final ModelMapper modelMapper;
 
-  @GetMapping(path = "/all")
+  @GetMapping
   @ApiOperation(value = "Get users")
   public @ResponseBody List<UserResponseDto> getAll() {
     return this.userService.findAll().stream()
@@ -36,8 +37,8 @@ public class UserController {
   @ApiOperation(
       value = "Get current user",
       authorizations = {@Authorization(value = "Bearer %token")})
-  public @ResponseBody UserResponseDto me(Principal principal) {
-    User user = userService.findOneByUsername(principal.getName()).orElse(new User());
+  public @ResponseBody UserResponseDto me(@AuthenticationPrincipal AuthUser principal) {
+    User user = userService.findOneByUsername(principal.getUsername()).orElse(new User());
     return modelMapper.map(user, UserResponseDto.class);
   }
 }

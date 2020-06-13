@@ -1,5 +1,6 @@
 package com.memes.user;
 
+import com.memes.auth.AuthUser;
 import com.memes.user.dto.UserResponseDto;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +44,11 @@ class UserControllerTest {
 
   @Test
   void me() {
-    Principal mockPrincipal = mock(Principal.class);
-    when(mockPrincipal.getName()).thenReturn(user.getUsername());
+    AuthUser mockUser = mock(AuthUser.class);
+    when(mockUser.getUsername()).thenReturn(user.getUsername());
     when(userService.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-    UserResponseDto result = userController.me(mockPrincipal);
+    UserResponseDto result = userController.me(mockUser);
 
     assertEquals(user.getUsername(), result.getUsername());
   }

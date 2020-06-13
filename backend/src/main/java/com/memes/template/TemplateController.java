@@ -22,7 +22,7 @@ public class TemplateController {
     return modelMapper.map(templateService.getOneById(templateId), TemplateResponseDto.class);
   }
 
-  @GetMapping(path = "")
+  @GetMapping
   public @ResponseBody Page<TemplateResponseDto> getAll(
       @RequestParam(name = "page", defaultValue = "0") int page) {
     return templateService
@@ -30,7 +30,7 @@ public class TemplateController {
         .map(template -> modelMapper.map(template, TemplateResponseDto.class));
   }
 
-  @PostMapping("/")
+  @PostMapping
   public @ResponseBody TemplateResponseDto addTemplate(
       @RequestBody SaveTemplateDto saveTemplateDto) {
     return modelMapper.map(

@@ -1,5 +1,6 @@
 package com.memes.config;
 
+import com.memes.auth.AuthUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ public class SwaggerConfig {
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
-        .ignoredParameterTypes(Principal.class)
+        .ignoredParameterTypes(Principal.class, AuthUser.class)
         .select()
         .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         .paths(PathSelectors.any())
