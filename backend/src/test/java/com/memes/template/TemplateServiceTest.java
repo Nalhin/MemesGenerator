@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -55,19 +56,19 @@ class TemplateServiceTest {
 
   @Test
   void findAll() {
-    Page<Template> returnedTemplates =
+    Page<Template> templatePage =
         new PageImpl<>(random.objects(Template.class, 4).collect(Collectors.toList()));
-    when(templateRepository.findAll(any(PageRequest.class))).thenReturn(returnedTemplates);
+    when(templateRepository.findAll(any(PageRequest.class))).thenReturn(templatePage);
 
     Page<Template> result = templateService.findAll(1);
 
-    assertEquals(returnedTemplates.getSize(), result.getSize());
+    assertEquals(templatePage.getSize(), result.getSize());
   }
 
   @Test
   void save() {
     Template template = random.nextObject(Template.class);
-    when(templateRepository.save(template)).thenReturn(template);
+    when(templateRepository.save(template)).then(returnsFirstArg());
 
     Template result = templateService.save(template);
 

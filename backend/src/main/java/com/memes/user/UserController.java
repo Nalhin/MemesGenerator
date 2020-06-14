@@ -37,8 +37,8 @@ public class UserController {
   @ApiOperation(
       value = "Get current user",
       authorizations = {@Authorization(value = "Bearer %token")})
-  public @ResponseBody UserResponseDto me(@AuthenticationPrincipal AuthUser principal) {
-    User user = userService.findOneByUsername(principal.getUsername()).orElse(new User());
+  public @ResponseBody UserResponseDto me(@AuthenticationPrincipal AuthUser authUser) {
+    User user = userService.findOneByUsername(authUser.getUsername()).orElse(new User());
     return modelMapper.map(user, UserResponseDto.class);
   }
 }

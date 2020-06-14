@@ -30,7 +30,7 @@ public class TemplateController {
         .map(template -> modelMapper.map(template, TemplateResponseDto.class));
   }
 
-  @PostMapping
+  @PostMapping(path="/save")
   public @ResponseBody TemplateResponseDto addTemplate(
       @RequestBody SaveTemplateDto saveTemplateDto) {
     return modelMapper.map(
