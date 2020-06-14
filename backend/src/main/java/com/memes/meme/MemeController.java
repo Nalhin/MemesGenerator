@@ -8,8 +8,12 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "/api/memes")
@@ -33,9 +37,14 @@ public class MemeController {
         .map(template -> modelMapper.map(template, MemeResponseDto.class));
   }
 
-  @PostMapping(path = "/save")
+  @PostMapping(
+      path = "/save",
+      consumes = {"multipart/form-data"})
   public @ResponseBody MemeResponseDto save(
-      @RequestBody SaveMemeDto saveMemeDto, @AuthenticationPrincipal @Nullable AuthUser authUser) {
-    return modelMapper.map(memeService.save(saveMemeDto, authUser), MemeResponseDto.class);
+      @RequestPart SaveMemeDto saveMemeDto,
+      @RequestPart MultipartFile file,
+      @AuthenticationPrincipal @Nullable AuthUser authUser)
+      throws IOException {
+    return modelMapper.map(memeService.save(saveMemeDto, authUser, file), MemeResponseDto.class);
   }
 }

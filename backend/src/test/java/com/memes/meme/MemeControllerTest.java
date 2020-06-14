@@ -11,7 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +28,7 @@ class MemeControllerTest {
   private MemeController memeController;
 
   private final EasyRandom random = new EasyRandom();
+  private final MultipartFile file = new MockMultipartFile("d", "d".getBytes());
 
   @BeforeEach
   void setUp() {
@@ -47,18 +51,18 @@ class MemeControllerTest {
         new PageImpl<>(random.objects(Meme.class, 4).collect(Collectors.toList()));
     when(memeService.findAll(anyInt())).thenReturn(returnedMemes);
 
-    Page<MemeResponseDto> result =  memeController.getAll(1);
+    Page<MemeResponseDto> result = memeController.getAll(1);
 
-    assertEquals(returnedMemes.getSize(),result.getSize());
+    assertEquals(returnedMemes.getSize(), result.getSize());
   }
 
   @Test
-  void save() {
+  void save() throws IOException {
     Meme savedMeme = random.nextObject(Meme.class);
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
-    when(memeService.save(saveMemeDto, null)).thenReturn(savedMeme);
+    when(memeService.save(saveMemeDto, null, file)).thenReturn(savedMeme);
 
-    MemeResponseDto result = memeController.save(saveMemeDto, null);
+    MemeResponseDto result = memeController.save(saveMemeDto, file, null);
 
     assertEquals(savedMeme.getId(), result.getId());
   }

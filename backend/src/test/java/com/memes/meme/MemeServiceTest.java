@@ -3,6 +3,7 @@ package com.memes.meme;
 import com.memes.auth.AuthUser;
 import com.memes.meme.dto.SaveMemeDto;
 import com.memes.template.Template;
+import com.memes.upload.FileUploadService;
 import com.memes.user.User;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,15 +37,17 @@ import static org.mockito.Mockito.when;
 class MemeServiceTest {
 
   @Mock private MemeRepository memeRepository;
+  @Mock private FileUploadService fileUploadService;
   @Mock private EntityManager entityManager;
 
   private MemeService memeService;
 
   private final EasyRandom random = new EasyRandom();
+  private final MultipartFile file = new MockMultipartFile("d", "d".getBytes());
 
   @BeforeEach
   void setUp() {
-    memeService = new MemeService(memeRepository, entityManager);
+    memeService = new MemeService(memeRepository, fileUploadService, entityManager);
   }
 
   @Test
@@ -77,7 +83,7 @@ class MemeServiceTest {
   }
 
   @Test
-  void saveUserPresent() {
+  void saveUserPresent() throws IOException {
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
     AuthUser authUser = mock(AuthUser.class);
     User author = random.nextObject(User.class);
@@ -87,22 +93,24 @@ class MemeServiceTest {
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
+    when(fileUploadService.uploadFile(file)).thenReturn("path");
 
-    Meme result = memeService.save(saveMemeDto, authUser);
+    Meme result = memeService.save(saveMemeDto, authUser, file);
 
     assertEquals(author, result.getAuthor());
     assertEquals(template, result.getTemplate());
   }
 
   @Test
-  void saveUserNotPresent() {
+  void saveUserNotPresent() throws IOException {
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
     Template template = random.nextObject(Template.class);
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
+    when(fileUploadService.uploadFile(file)).thenReturn("path");
 
-    Meme result = memeService.save(saveMemeDto, null);
+    Meme result = memeService.save(saveMemeDto, null, file);
 
     assertEquals(template, result.getTemplate());
     assertNull(result.getAuthor());

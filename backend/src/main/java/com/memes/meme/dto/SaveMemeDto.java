@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class SaveMemeDto {
-    private Long templateId;
-
+  private Long templateId;
 }
