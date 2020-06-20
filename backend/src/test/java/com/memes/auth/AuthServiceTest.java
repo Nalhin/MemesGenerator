@@ -51,10 +51,10 @@ class AuthServiceTest {
   }
 
   @Test
-  void register() {
+  void signUp() {
     when(jwtService.sign(user.getUsername())).thenReturn(token);
 
-    String result = authService.register(user);
+    String result = authService.signUp(user);
 
     assertEquals(token, result);
     verify(passwordEncoder).encode(anyString());

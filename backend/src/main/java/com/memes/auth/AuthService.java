@@ -31,7 +31,7 @@ public class AuthService {
     return jwtService.sign(username);
   }
 
-  public String register(User user) {
+  public String signUp(User user) {
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     userService.save(user);
     return jwtService.sign(user.getUsername());

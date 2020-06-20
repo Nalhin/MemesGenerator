@@ -2,7 +2,7 @@ package com.memes.auth;
 
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
-import com.memes.auth.dto.RegisterUserDto;
+import com.memes.auth.dto.SignUpUserDto;
 import com.memes.user.User;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +26,10 @@ public class AuthController {
     return authResponseDto;
   }
 
-  @PostMapping("/register")
-  public @ResponseBody AuthResponseDto register(@RequestBody RegisterUserDto registerUserDto) {
+  @PostMapping("/sign-up")
+  public @ResponseBody AuthResponseDto signUp(@RequestBody SignUpUserDto signUpUserDto) {
     AuthResponseDto authResponseDto = new AuthResponseDto();
-    authResponseDto.setToken(authService.register(modelMapper.map(registerUserDto, User.class)));
+    authResponseDto.setToken(authService.signUp(modelMapper.map(signUpUserDto, User.class)));
     return authResponseDto;
   }
 }

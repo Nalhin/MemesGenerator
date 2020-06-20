@@ -2,7 +2,7 @@ package com.memes.auth;
 
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
-import com.memes.auth.dto.RegisterUserDto;
+import com.memes.auth.dto.SignUpUserDto;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,12 +39,12 @@ class AuthControllerTest {
   }
 
   @Test
-  void register() {
+  void signUp() {
     String token = "token";
-    RegisterUserDto registerUserDto = new EasyRandom().nextObject(RegisterUserDto.class);
-    when(authService.register(any())).thenReturn(token);
+    SignUpUserDto signUpUserDto = new EasyRandom().nextObject(SignUpUserDto.class);
+    when(authService.signUp(any())).thenReturn(token);
 
-    AuthResponseDto result = authController.register(registerUserDto);
+    AuthResponseDto result = authController.signUp(signUpUserDto);
 
     assertEquals(token, result.getToken());
   }
