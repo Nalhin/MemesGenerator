@@ -1,8 +1,4 @@
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SignInComponent } from './sign-in.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +8,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import {
+  authResponseDtoFactory,
+  loginUserDtoFactory,
+  signUpUserDtoFactory,
+} from '../../../../test/fixtures/auth';
 
 describe('SignInComponent', () => {
   let component: SignInComponent;
@@ -51,19 +52,12 @@ describe('SignInComponent', () => {
       ).toBeTruthy();
     });
 
-    it('should be valid after inserting correct values', () => {
-      const inputs = [
-        { selector: '#username', value: 'username' },
-        {
-          selector: '#password',
-          value: 'password',
-        },
-        { selector: '#email', value: 'email' },
-      ];
+    it('should be valid after inserting the correct values', () => {
+      const signUpUserDto = signUpUserDtoFactory.buildOne();
 
-      for (const { selector, value } of inputs) {
+      for (let [key, value] of Object.entries(signUpUserDto)) {
         fixture.debugElement
-          .query(By.css(selector))
+          .query(By.css(`#${key}`))
           .triggerEventHandler('input', {
             target: {
               value,
@@ -75,20 +69,18 @@ describe('SignInComponent', () => {
         fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeFalsy();
       expect(component.signInForm.valid).toBeTruthy();
-      expect(component.signInForm.value.username).toBe('username');
+      expect(component.signInForm.value).toEqual(signUpUserDto);
     });
   });
 
   describe('onSubmit', () => {
     it('should navigate on login', () => {
-      jest.spyOn(authService, 'signIn').mockReturnValueOnce(of(null as any));
+      jest
+        .spyOn(authService, 'signIn')
+        .mockReturnValueOnce(of(authResponseDtoFactory.buildOne()));
       router.navigate = jest.fn();
 
-      component.signInForm.setValue({
-        username: 'username',
-        password: 'password',
-        email: 'email',
-      });
+      component.signInForm.setValue(signUpUserDtoFactory.buildOne());
       component.onSubmit();
 
       expect(router.navigate).toHaveBeenCalledTimes(1);

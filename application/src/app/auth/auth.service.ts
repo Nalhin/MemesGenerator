@@ -14,9 +14,9 @@ export class AuthService {
 
   constructor(private readonly httpClient: HttpClient) {}
 
-  login(loginUser: Api.LoginUserDto) {
+  login(loginUser: Api.LoginUsingPOST.Parameters.LoginUserDto) {
     return this.httpClient
-      .post<Api.AuthResponseDto>('/auth/login', loginUser)
+      .post<Api.LoginUsingPOST.Responses.$200>('/auth/login', loginUser)
       .pipe(
         tap((res) => {
           this._user.next(new AuthenticatedUser(res));
@@ -24,9 +24,9 @@ export class AuthService {
       );
   }
 
-  signIn(signUpUser: Api.SignUpUserDto) {
+  signIn(signUpUser: Api.SignUpUsingPOST.Parameters.SignUpUserDto) {
     return this.httpClient
-      .post<Api.SignUpUserDto>('/auth/sign-up', signUpUser)
+      .post<Api.SignUpUsingPOST.Responses.$200>('/auth/sign-up', signUpUser)
       .pipe(tap((user) => this._user.next(new AuthenticatedUser(user))));
   }
 
