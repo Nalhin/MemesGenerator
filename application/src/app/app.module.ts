@@ -22,5 +22,6 @@ import { BaseUrlInterceptor } from './shared/interceptors/base-url.interceptor';
     },
   ],
   bootstrap: [AppComponent],
+  exports: [],
 })
 export class AppModule {}

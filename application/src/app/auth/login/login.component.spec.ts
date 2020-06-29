@@ -11,7 +11,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
   authResponseDtoFactory,
   loginUserDtoFactory,
-} from '../../../../test/fixtures/auth';
+} from '../../../../test/fixtures/auth.fixture';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;

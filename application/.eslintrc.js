@@ -6,8 +6,8 @@ module.exports = {
       { type: 'attribute', prefix: 'app', style: 'camelCase' },
     ],
     '@angular-eslint/component-selector': [
-      'error',
-      { type: 'element', prefix: 'app', style: 'kebab-case' },
+      0,
+      { type: 'attribute', prefix: ['app', 'base'], style: 'kebab-case' },
     ],
   },
   overrides: [

@@ -10,7 +10,7 @@ import {
   authResponseDtoFactory,
   loginUserDtoFactory,
   signUpUserDtoFactory,
-} from '../../../test/fixtures/auth';
+} from '../../../test/fixtures/auth.fixture';
 
 describe('AuthService', () => {
   let service: AuthService;

@@ -12,7 +12,7 @@ import {
   authResponseDtoFactory,
   loginUserDtoFactory,
   signUpUserDtoFactory,
-} from '../../../../test/fixtures/auth';
+} from '../../../../test/fixtures/auth.fixture';
 
 describe('SignInComponent', () => {
   let component: SignInComponent;
