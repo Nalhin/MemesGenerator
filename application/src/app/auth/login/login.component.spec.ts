@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
     it('should be valid after inserting the correct values', () => {
       const loginUserDto = loginUserDtoFactory.buildOne();
 
-      for (let [key, value] of Object.entries(loginUserDto)) {
+      for (const [key, value] of Object.entries(loginUserDto)) {
         fixture.debugElement
           .query(By.css(`#${key}`))
           .triggerEventHandler('input', {

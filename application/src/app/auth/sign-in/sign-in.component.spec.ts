@@ -10,7 +10,6 @@ import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import {
   authResponseDtoFactory,
-  loginUserDtoFactory,
   signUpUserDtoFactory,
 } from '../../../../test/fixtures/auth.fixture';
 
@@ -55,7 +54,7 @@ describe('SignInComponent', () => {
     it('should be valid after inserting the correct values', () => {
       const signUpUserDto = signUpUserDtoFactory.buildOne();
 
-      for (let [key, value] of Object.entries(signUpUserDto)) {
+      for (const [key, value] of Object.entries(signUpUserDto)) {
         fixture.debugElement
           .query(By.css(`#${key}`))
           .triggerEventHandler('input', {

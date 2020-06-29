@@ -24,8 +24,8 @@ describe('InputComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
-    element = fixture.debugElement.query(By.css('input'));
     fixture.detectChanges();
+    element = fixture.debugElement.query(By.css('input'));
   });
 
   it('should create', () => {

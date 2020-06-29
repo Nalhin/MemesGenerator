@@ -53,7 +53,7 @@ describe('AuthService', () => {
     const response = authResponseDtoFactory.buildOne();
 
     it('should signIn user correctly', (done) => {
-      service.signIn(mockSignUpUser).subscribe((response) => {
+      service.signIn(mockSignUpUser).subscribe(() => {
         expect(response).toEqual(response);
         done();
       });
