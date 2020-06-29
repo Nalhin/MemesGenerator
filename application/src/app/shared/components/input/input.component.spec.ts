@@ -31,10 +31,4 @@ describe('InputComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should add classes without overriding preexisting ones', () => {
-    expect(element.classes).toHaveProperty('test');
-
-    expect(Object.keys(element.classes).length).toBeGreaterThan(1);
-  });
 });
