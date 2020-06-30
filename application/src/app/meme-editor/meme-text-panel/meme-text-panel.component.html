@@ -1,0 +1,10 @@
+<div>
+  <label for="{{ memeText.id }}">
+    {{ memeText.id }}
+  </label>
+  <input
+    id="{{ memeText.id }}"
+    [value]="memeText.text"
+    (change)="change($event)"
+  />
+</div>

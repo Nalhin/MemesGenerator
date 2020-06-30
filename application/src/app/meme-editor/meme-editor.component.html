@@ -1,0 +1,14 @@
+<div>
+  <div class="relative" [style.width.px]="400">
+    <app-meme-canvas [memeTexts]="memeTexts"></app-meme-canvas>
+    <app-meme-text
+      [memeText]="memeText"
+      *ngFor="let memeText of memeTexts; trackBy: trackByFn"
+    ></app-meme-text>
+  </div>
+  <app-meme-text-panel
+    (memeTextChange)="memeTextChange($event)"
+    [memeText]="memeText"
+    *ngFor="let memeText of memeTexts; trackBy: trackByFn"
+  ></app-meme-text-panel>
+</div>

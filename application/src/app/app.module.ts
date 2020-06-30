@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseUrlInterceptor } from './shared/interceptors/base-url.interceptor';
+import { MemeEditorModule } from './meme-editor/meme-editor.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,6 +14,7 @@ import { BaseUrlInterceptor } from './shared/interceptors/base-url.interceptor';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    MemeEditorModule,
   ],
   providers: [
     {

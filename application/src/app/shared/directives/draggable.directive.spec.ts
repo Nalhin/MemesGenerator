@@ -42,7 +42,11 @@ describe('DraggableDirective', () => {
   });
 
   it('should trigger drag event and calculate positions correctly', () => {
-    const mouseDownEvent = { offsetX: 50, offsetY: 45 };
+    const mouseDownEvent = {
+      offsetX: 50,
+      offsetY: 45,
+      stopPropagation: jest.fn(),
+    };
     const mouseMoveEvent = {
       pageX: 60,
       pageY: 50,
@@ -57,5 +61,6 @@ describe('DraggableDirective', () => {
     fixture.detectChanges();
 
     expect(component.position).toEqual(expected);
+    expect(mouseDownEvent.stopPropagation).toHaveBeenCalledTimes(1);
   });
 });

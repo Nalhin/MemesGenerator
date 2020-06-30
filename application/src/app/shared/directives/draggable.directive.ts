@@ -30,7 +30,7 @@ export class DraggableDirective implements OnInit {
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     this.mouseDown.emit(event);
-    return false;
+    event.stopPropagation();
   }
 
   @HostListener('document:mousemove', ['$event'])
