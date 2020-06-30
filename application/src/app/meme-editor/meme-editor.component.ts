@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MemeText, Size } from './meme-text/meme-text.model';
 
 @Component({
-  selector: 'app-editor',
+  selector: 'app-meme-editor',
   templateUrl: './meme-editor.component.html',
 })
 export class MemeEditorComponent {
+  @Input() memeTemplateDetails: Api.TemplateResponseDto;
+
   memeTexts: MemeText[] = [
     new MemeText({
       id: 1,

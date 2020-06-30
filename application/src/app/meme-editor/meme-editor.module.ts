@@ -13,5 +13,6 @@ import { MemeTextPanelComponent } from './meme-text-panel/meme-text-panel.compon
     MemeTextPanelComponent,
   ],
   imports: [SharedModule],
+  exports: [MemeEditorComponent],
 })
 export class MemeEditorModule {}

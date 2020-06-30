@@ -13,6 +13,13 @@ const routes: Routes = [
     path: 'editor',
     component: MemeEditorComponent,
   },
+  {
+    path: 'templates',
+    loadChildren: () =>
+      import('./meme-templates/meme-templates.module').then(
+        (m) => m.MemeTemplatesModule,
+      ),
+  },
 ];
 
 @NgModule({
