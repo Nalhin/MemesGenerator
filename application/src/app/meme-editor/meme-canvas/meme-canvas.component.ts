@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   Input,
+  OnChanges,
   ViewChild,
 } from '@angular/core';
 import { MemeText } from '../meme-text/meme-text.model';
@@ -12,7 +13,7 @@ import { MemeText } from '../meme-text/meme-text.model';
   template: `<canvas #canvas width="400" height="400"></canvas>
     <button class="absolute top-0" base (click)="saveImage()">Save</button>`,
 })
-export class MemeCanvasComponent implements AfterViewInit {
+export class MemeCanvasComponent implements AfterViewInit, OnChanges {
   @ViewChild('canvas')
   canvas: ElementRef<HTMLCanvasElement>;
   context: CanvasRenderingContext2D;
@@ -20,15 +21,22 @@ export class MemeCanvasComponent implements AfterViewInit {
   @Input()
   memeTexts: MemeText[];
 
+  @Input()
+  memeTemplateDetails: Api.TemplateResponseDto;
+
   ngAfterViewInit(): void {
     this.context = this.canvas.nativeElement.getContext('2d');
-    this.loadImage();
+  }
+
+  ngOnChanges(changes) {
+    if (changes.memeTemplateDetails.currentValue?.url) {
+      this.loadImage();
+    }
   }
 
   loadImage(): void {
     const image = new Image();
-    image.src =
-      'https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg';
+    image.src = this.memeTemplateDetails.url;
     image.onload = () => {
       this.context.drawImage(
         image,

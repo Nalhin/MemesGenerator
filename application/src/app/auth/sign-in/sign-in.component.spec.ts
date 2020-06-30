@@ -77,7 +77,7 @@ describe('SignInComponent', () => {
       jest
         .spyOn(authService, 'signIn')
         .mockReturnValueOnce(of(authResponseDtoFactory.buildOne()));
-      router.navigate = jest.fn();
+      jest.spyOn(router, 'navigate').mockResolvedValueOnce(true);
 
       component.signInForm.setValue(signUpUserDtoFactory.buildOne());
       component.onSubmit();

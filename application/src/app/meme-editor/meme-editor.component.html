@@ -1,6 +1,6 @@
 <div>
   <div class="relative" [style.width.px]="400">
-    <app-meme-canvas [memeTexts]="memeTexts"></app-meme-canvas>
+    <app-meme-canvas [memeTexts]="memeTexts" [memeTemplateDetails]="memeTemplateDetails"></app-meme-canvas>
     <app-meme-text
       [memeText]="memeText"
       *ngFor="let memeText of memeTexts; trackBy: trackByFn"
