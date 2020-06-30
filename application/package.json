@@ -38,6 +38,7 @@
     "@types/jest": "^26.0.0",
     "@types/node": "^12.12.47",
     "autoprefixer": "^9.8.0",
+    "canvas": "^2.6.1",
     "codelyzer": "^5.1.2",
     "dotenv-webpack": "^1.8.0",
     "dtsgenerator": "2.7.0",
