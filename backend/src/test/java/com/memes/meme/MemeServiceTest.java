@@ -93,7 +93,7 @@ class MemeServiceTest {
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
-    when(fileUploadService.uploadFile(file)).thenReturn("path");
+    when(fileUploadService.uploadFile(file,"filename")).thenReturn("path");
 
     Meme result = memeService.save(saveMemeDto, authUser, file);
 
@@ -108,7 +108,7 @@ class MemeServiceTest {
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
-    when(fileUploadService.uploadFile(file)).thenReturn("path");
+    when(fileUploadService.uploadFile(file,"filename")).thenReturn("path");
 
     Meme result = memeService.save(saveMemeDto, null, file);
 

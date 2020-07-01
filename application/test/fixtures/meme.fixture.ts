@@ -20,3 +20,9 @@ export const memeResponseDtoFactory = new Factory<Api.MemeResponseDto>()
     url: faker.internet.url,
   })
   .done();
+
+export const pageMemeResponseDtoFactory = new Factory<Api.PageMemeResponseDto>()
+  .props({
+    content: memeResponseDtoFactory.buildMany(4),
+  })
+  .done();

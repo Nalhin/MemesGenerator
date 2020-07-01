@@ -20,6 +20,11 @@ const routes: Routes = [
         (m) => m.MemeTemplatesModule,
       ),
   },
+  {
+    path: 'memes',
+    loadChildren: () =>
+      import('./memes/memes.module').then((m) => m.MemesModule),
+  },
 ];
 
 @NgModule({

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MemeCanvasComponent } from './meme-canvas.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MemeCanvasComponent', () => {
   let component: MemeCanvasComponent;
@@ -8,6 +9,7 @@ describe('MemeCanvasComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [MemeCanvasComponent],
     }).compileComponents();
   }));
