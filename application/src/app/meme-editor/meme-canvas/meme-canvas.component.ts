@@ -7,10 +7,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MemeText } from '../meme-text/meme-text.model';
+import { MemesService } from '../../memes/memes.service';
 
 @Component({
   selector: 'app-meme-canvas',
-  template: `<canvas #canvas width="400" height="400"></canvas>
+  template: ` <canvas #canvas width="400" height="400"></canvas>
     <button class="absolute top-0" base (click)="saveImage()">Save</button>`,
 })
 export class MemeCanvasComponent implements AfterViewInit, OnChanges {
@@ -23,6 +24,8 @@ export class MemeCanvasComponent implements AfterViewInit, OnChanges {
 
   @Input()
   memeTemplateDetails: Api.TemplateResponseDto;
+
+  constructor(private readonly memesService: MemesService) {}
 
   ngAfterViewInit(): void {
     this.context = this.canvas.nativeElement.getContext('2d');
@@ -37,6 +40,7 @@ export class MemeCanvasComponent implements AfterViewInit, OnChanges {
   loadImage(): void {
     const image = new Image();
     image.src = this.memeTemplateDetails.url;
+    image.crossOrigin = 'Anonymous';
     image.onload = () => {
       this.context.drawImage(
         image,
@@ -50,7 +54,6 @@ export class MemeCanvasComponent implements AfterViewInit, OnChanges {
 
   saveImage(): void {
     this.context.font = '30px Impact';
-
     for (const memeText of this.memeTexts) {
       this.context.fillText(
         memeText.text,
@@ -58,7 +61,10 @@ export class MemeCanvasComponent implements AfterViewInit, OnChanges {
         memeText.position.y,
       );
     }
-
-    this.canvas.nativeElement.toDataURL('image/png');
+    this.canvas.nativeElement.toBlob((blob) => {
+      this.memesService
+        .save(blob, { templateId: this.memeTemplateDetails.id })
+        .subscribe();
+    });
   }
 }

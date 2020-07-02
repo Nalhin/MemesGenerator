@@ -41,15 +41,16 @@ describe('MemeTemplatesListComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should fetch and display templates', () => {
-      jest
-        .spyOn(memeTemplatesService, 'getAll')
-        .mockReturnValueOnce(of(pageTemplateResponseDtoFactory.buildOne()));
+    it('should fetch data and display templates', () => {
+      const items = pageTemplateResponseDtoFactory.buildOne();
+      jest.spyOn(memeTemplatesService, 'getAll').mockReturnValueOnce(of(items));
 
       component.ngOnInit();
       fixture.detectChanges();
 
-      expect(fixture.debugElement.queryAll(By.css('img')).length).toBe(4);
+      expect(fixture.debugElement.queryAll(By.css('img')).length).toBe(
+        items.content.length,
+      );
     });
   });
 

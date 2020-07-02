@@ -15,9 +15,8 @@ public class FileUploadService {
     this.servletContext = servletContext;
   }
 
-  public String uploadFile(MultipartFile file) throws IOException {
-    String fileLocation = new File("images").getAbsolutePath() + "/" + file.getOriginalFilename();
-
+  public String uploadFile(MultipartFile file, String fileName) throws IOException {
+    String fileLocation = new File("images").getAbsolutePath() + "/" + fileName;
 
     file.transferTo(new File(fileLocation));
 

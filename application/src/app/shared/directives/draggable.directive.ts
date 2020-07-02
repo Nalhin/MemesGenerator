@@ -10,7 +10,7 @@ import { map, mergeMap, takeUntil } from 'rxjs/operators';
 import { DragPosition } from '../interfaces/dragPosition';
 
 @Directive({
-  selector: '[appDraggable]',
+  selector: '[dragged]',
 })
 export class DraggableDirective implements OnInit {
   mouseUp = new EventEmitter<MouseEvent>();

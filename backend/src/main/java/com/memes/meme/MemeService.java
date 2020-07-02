@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class MemeService {
       meme.setAuthor(entityManager.getReference(User.class, authUser.getId()));
     }
     meme.setTemplate(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()));
-    meme.setUrl(fileUploadService.uploadFile(file));
+    meme.setUrl(fileUploadService.uploadFile(file, UUID.randomUUID().toString() + ".jpg"));
     return memeRepository.save(meme);
   }
 }
