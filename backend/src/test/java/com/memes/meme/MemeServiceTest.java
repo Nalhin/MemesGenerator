@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,9 +65,7 @@ class MemeServiceTest {
 
     assertThrows(
         ResponseStatusException.class,
-        () -> {
-          memeService.getOneById(1L);
-        });
+        () -> memeService.getOneById(1L));
   }
 
   @Test
@@ -93,7 +90,7 @@ class MemeServiceTest {
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
-    when(fileUploadService.uploadFile(file,"filename")).thenReturn("path");
+    when(fileUploadService.uploadFile(any(MultipartFile.class), anyString())).thenReturn("path");
 
     Meme result = memeService.save(saveMemeDto, authUser, file);
 
@@ -108,7 +105,7 @@ class MemeServiceTest {
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
-    when(fileUploadService.uploadFile(file,"filename")).thenReturn("path");
+    when(fileUploadService.uploadFile(any(MultipartFile.class), anyString())).thenReturn("path");
 
     Meme result = memeService.save(saveMemeDto, null, file);
 

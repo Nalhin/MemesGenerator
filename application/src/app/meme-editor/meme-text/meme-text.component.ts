@@ -8,7 +8,6 @@ import { DraggablePosition } from './draggable-position.model';
   template: ` <div
     #container
     class="absolute border-2 border-black select-none"
-    appDraggable
     (dragged)="onDrag($event)"
     [ngStyle]="{
       'width.%': memeText.size.width,
@@ -17,25 +16,16 @@ import { DraggablePosition } from './draggable-position.model';
       'left.px': memeText.position.x
     }"
   >
-    <div
-      #handle
-      class="absolute top-0"
-      (dragged)="onResize($event)"
-      appDraggable
-    >
+    <div #handle class="absolute top-0" (dragged)="onResize($event)">
       X
     </div>
-    <div class="absolute bottom-0" (dragged)="onResize($event)" appDraggable>
+    <div class="absolute bottom-0" (dragged)="onResize($event)">
       X
     </div>
-    <div
-      class="absolute right-0 bottom-0"
-      (dragged)="onResize($event)"
-      appDraggable
-    >
+    <div class="absolute right-0 bottom-0" (dragged)="onResize($event)">
       X
     </div>
-    <div class="absolute right-0" (dragged)="onResize($event)" appDraggable>
+    <div class="absolute right-0" (dragged)="onResize($event)">
       X
     </div>
     <span>{{ memeText.text }}</span>
