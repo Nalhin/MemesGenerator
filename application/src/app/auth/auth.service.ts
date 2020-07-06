@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AnonymousUser, AuthenticatedUser, User } from './auth-user.model';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -34,8 +34,12 @@ export class AuthService {
     return this._user.value;
   }
 
-  get onAuth(): Observable<User> {
+  onAuth(): Observable<User> {
     return this._user.pipe(filter((user) => user.isAuthenticated));
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    return this._user.pipe(map((u) => u.isAuthenticated));
   }
 
   logout() {

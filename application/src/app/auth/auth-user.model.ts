@@ -1,9 +1,9 @@
 export abstract class User {
-  username: string;
-  email: string;
-  id: number;
-  roles: string[] = [];
-  token: string;
+  readonly username: string;
+  readonly email: string;
+  readonly id: number;
+  readonly roles: string[] = [];
+  readonly token: string;
 
   protected constructor(partial: Partial<User> = {}) {
     Object.assign(partial);

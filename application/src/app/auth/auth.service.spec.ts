@@ -65,7 +65,7 @@ describe('AuthService', () => {
   describe('onAuth', () => {
     it('should activate after successful authentication', (done) => {
       service.signIn(signUpUserDtoFactory.buildOne()).subscribe();
-      service.onAuth.subscribe((authUser) => {
+      service.onAuth().subscribe((authUser) => {
         expect(authUser).toBeInstanceOf(AuthenticatedUser);
         done();
       });

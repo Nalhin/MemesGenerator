@@ -1,11 +1,11 @@
 <nav class="sticky">
   <ul class="flex space-x-8 text-sm font-semibold">
-    <li>
+    <li *ngIf="!(isAuthenticated$ | async)" >
       <a routerLink="/auth/sign-in" routerLinkActive="active border-b-2 border-orange-500"
          class="hover:text-orange-500">Sign in
       </a>
     </li>
-    <li>
+    <li *ngIf="!(isAuthenticated$ | async)">
       <a routerLink="/auth/login" routerLinkActive="active border-b-2 border-orange-500"
          class="hover:text-orange-500">Login
       </a>
@@ -21,7 +21,9 @@
       </a>
     </li>
     <li>
-      <a routerLink="/logout" routerLinkActive="active border-b-2 border-orange-500" class="hover:text-orange-500">
+      <a *ngIf="isAuthenticated$ | async" routerLink="/auth/logout"
+                                         routerLinkActive="active border-b-2 border-orange-500"
+                                         class="hover:text-orange-500">
         Logout
       </a>
     </li>
