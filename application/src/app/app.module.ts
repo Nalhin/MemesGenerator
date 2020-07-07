@@ -6,6 +6,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseUrlInterceptor } from './shared/interceptors/base-url.interceptor';
 import { LayoutModule } from './layout/layout.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -15,6 +16,7 @@ import { LayoutModule } from './layout/layout.module';
     HttpClientModule,
     ReactiveFormsModule,
     LayoutModule,
+    BrowserAnimationsModule,
   ],
   providers: [
     {

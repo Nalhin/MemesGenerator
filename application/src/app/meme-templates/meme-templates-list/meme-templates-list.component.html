@@ -1,9 +1,12 @@
 <div>
-  <h1> Blank meme templates</h1>
-  <div class="grid grid-cols-3 gap-4">
-    <div *ngFor="let memeTemplate of (memeTemplates$ | async)?.content" [routerLink]="[memeTemplate.id]">
-      <h4>{{memeTemplate.title}}</h4>
-      <img [src]="memeTemplate.url" [alt]="memeTemplate.title"/>
+  <h1>Blank meme templates</h1>
+  <div>
+    <div
+      *ngFor="let memeTemplate of (memeTemplates$ | async)?.content"
+      [routerLink]="[memeTemplate.id]"
+    >
+      <h4>{{ memeTemplate.title }}</h4>
+      <img [src]="memeTemplate.url" [alt]="memeTemplate.title" />
     </div>
   </div>
 </div>

@@ -1,18 +1,31 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ButtonComponent } from './components/button/button.component';
-import { InputComponent } from './components/input/input.component';
 import { DraggableDirective } from './directives/draggable.directive';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [ButtonComponent, InputComponent, DraggableDirective],
+  imports: [
+    CommonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+  ],
+  declarations: [DraggableDirective],
   exports: [
     CommonModule,
     ReactiveFormsModule,
-    ButtonComponent,
-    InputComponent,
+    MatInput,
+    MatFormField,
+    MatButton,
+    MatIconModule,
+    MatListModule,
     DraggableDirective,
   ],
 })

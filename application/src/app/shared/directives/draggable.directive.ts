@@ -1,7 +1,6 @@
 import {
   Directive,
   EventEmitter,
-  HostBinding,
   HostListener,
   OnInit,
   Output,
@@ -19,8 +18,6 @@ export class DraggableDirective implements OnInit {
 
   @Output()
   dragged = new EventEmitter<DragPosition>();
-
-  @HostBinding() class = 'cursor-pointer';
 
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {

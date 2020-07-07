@@ -1,17 +1,23 @@
 <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
-  <label for="username">
-    Username
-  </label>
-  <input base id="username" type="text" formControlName="username" />
-  <label for="email">
-    Email
-  </label>
-  <input base id="email" type="text" formControlName="email" />
-  <label for="password">
-    Password
-  </label>
-  <input base id="password" type="password" formControlName="password" />
-  <button base type="submit" class="py-2" [disabled]="!signInForm.valid">
+  <mat-form-field>
+    <label for="username">
+      Username
+    </label>
+    <input matInput id="username" type="text" formControlName="username" />
+  </mat-form-field>
+  <mat-form-field>
+    <label for="email">
+      Email
+    </label>
+    <input matInput id="email" type="text" formControlName="email" />
+  </mat-form-field>
+  <mat-form-field>
+    <label for="password">
+      Password
+    </label>
+    <input matInput id="password" type="password" formControlName="password" />
+  </mat-form-field>
+  <button mat-button type="submit" class="py-2" [disabled]="!signInForm.valid">
     Sign in
   </button>
 </form>

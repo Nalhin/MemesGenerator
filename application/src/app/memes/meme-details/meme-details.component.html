@@ -1,5 +1,5 @@
 <div *ngIf="meme$ | async; let meme">
-  <h1>{{meme.template.title}}</h1>
-  <div>Created: {{meme.created}}</div>
-  <img [src]="meme.url" [alt]="meme.url">
+  <h1>{{ meme.template.title }}</h1>
+  <div>Created: {{ meme.created }}</div>
+  <img [src]="meme.url" [alt]="meme.url" />
 </div>

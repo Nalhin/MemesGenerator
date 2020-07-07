@@ -12,7 +12,9 @@ import { MemesService } from '../../memes/memes.service';
 @Component({
   selector: 'app-meme-canvas',
   template: ` <canvas #canvas width="400" height="400"></canvas>
-    <button class="absolute top-0" base (click)="saveImage()">Save</button>`,
+    <button class="absolute top-0" mat-button (click)="saveImage()">
+      Save
+    </button>`,
 })
 export class MemeCanvasComponent implements AfterViewInit, OnChanges {
   @ViewChild('canvas')

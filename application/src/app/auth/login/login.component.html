@@ -1,11 +1,15 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <label for="username">
-    Username
-  </label>
-  <input base id="username" type="text" formControlName="username" />
-  <label for="password">
-    Password
-  </label>
-  <input base id="password" type="password" formControlName="password" />
-  <button base type="submit" [disabled]="!loginForm.valid">Login</button>
+  <mat-form-field>
+    <label for="username">
+      Username
+    </label>
+    <input matInput id="username" type="text" formControlName="username" />
+  </mat-form-field>
+  <mat-form-field>
+    <label for="password">
+      Password
+    </label>
+    <input matInput id="password" type="password" formControlName="password" />
+  </mat-form-field>
+  <button mat-button type="submit" [disabled]="!loginForm.valid">Login</button>
 </form>

@@ -1,5 +1,5 @@
 <div>
   <div *ngFor="let meme of (memes$ | async)?.content">
-    <img [src]="meme.url" [alt]="meme.url">
+    <img [src]="meme.url" [alt]="meme.url" />
   </div>
 </div>
