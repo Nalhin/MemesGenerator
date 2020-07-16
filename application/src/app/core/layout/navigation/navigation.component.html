@@ -1,4 +1,3 @@
-<script src="navigation.component.ts"></script>
 <mat-toolbar color="primary">
   <button mat-icon-button (click)="sidenav.toggle()">
     <mat-icon>menu</mat-icon>
@@ -6,20 +5,29 @@
   <h1>Memes Generator</h1>
 </mat-toolbar>
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav [mode]="'over'" [fixedInViewport]="true" fixedTopGap="64">
+  <mat-sidenav
+    #sidenav
+    [mode]="'over'"
+    [fixedInViewport]="true"
+    fixedTopGap="64"
+  >
     <mat-nav-list>
       <a
         mat-list-item
         routerLink="/auth/sign-in"
         *ngIf="!(isAuthenticated$ | async)"
-      >Sign in
-      </a
-      >
-      <a routerLink="/auth/login" *ngIf="!(isAuthenticated$ | async)">Login</a>
-      <a routerLink="/memes">
+        >Sign in
+      </a>
+      <a
+        mat-list-item
+        routerLink="/auth/login"
+        *ngIf="!(isAuthenticated$ | async)"
+        >Login
+      </a>
+      <a mat-list-item routerLink="/memes">
         Memes
       </a>
-      <a routerLink="/templates">Templates</a>
+      <a mat-list-item routerLink="/templates">Templates </a>
       <a
         mat-list-item
         *ngIf="isAuthenticated$ | async"
@@ -29,7 +37,7 @@
       </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="sidenav-content">
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

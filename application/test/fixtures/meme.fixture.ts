@@ -2,14 +2,19 @@ import { Factory } from 'factory.io';
 import * as faker from 'faker';
 import { userResponseDtoFactory } from './users.fixture';
 import { templateResponseDtoFactory } from './meme-template.fixture';
+import {
+  MemeResponseDto,
+  PageMemeResponseDto,
+  SaveMemeDto,
+} from '../../src/app/shared/interfaces/api.interface';
 
-export const saveMemeDtoFactory = new Factory<Api.SaveMemeDto>()
+export const saveMemeDtoFactory = new Factory<SaveMemeDto>()
   .props({
     templateId: faker.random.number,
   })
   .done();
 
-export const memeResponseDtoFactory = new Factory<Api.MemeResponseDto>()
+export const memeResponseDtoFactory = new Factory<MemeResponseDto>()
   .options({ idField: 'id' })
   .props({
     author: userResponseDtoFactory.buildOne.bind(userResponseDtoFactory),
@@ -21,7 +26,7 @@ export const memeResponseDtoFactory = new Factory<Api.MemeResponseDto>()
   })
   .done();
 
-export const pageMemeResponseDtoFactory = new Factory<Api.PageMemeResponseDto>()
+export const pageMemeResponseDtoFactory = new Factory<PageMemeResponseDto>()
   .props({
     content: memeResponseDtoFactory.buildMany(4),
   })

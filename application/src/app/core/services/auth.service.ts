@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AnonymousUser, AuthenticatedUser, User } from './auth-user.model';
+import {
+  AnonymousUser,
+  AuthenticatedUser,
+  User,
+} from '../../shared/models/auth-user.model';
 import { filter, map, tap } from 'rxjs/operators';
+import {
+  AuthResponseDto,
+  LoginUserDto,
+  SignUpUserDto,
+} from '../../shared/interfaces/api.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,19 +23,17 @@ export class AuthService {
 
   constructor(private readonly httpClient: HttpClient) {}
 
-  login(loginUser: Api.LoginUsingPOST.Parameters.LoginUserDto) {
-    return this.httpClient
-      .post<Api.LoginUsingPOST.Responses.$200>('/auth/login', loginUser)
-      .pipe(
-        tap((res) => {
-          this._user.next(new AuthenticatedUser(res));
-        }),
-      );
+  login(loginUser: LoginUserDto) {
+    return this.httpClient.post<AuthResponseDto>('/auth/login', loginUser).pipe(
+      tap((res) => {
+        this._user.next(new AuthenticatedUser(res));
+      }),
+    );
   }
 
-  signIn(signUpUser: Api.SignUpUsingPOST.Parameters.SignUpUserDto) {
+  signUp(signUpUser: SignUpUserDto) {
     return this.httpClient
-      .post<Api.SignUpUsingPOST.Responses.$200>('/auth/sign-up', signUpUser)
+      .post<AuthResponseDto>('/auth/sign-up', signUpUser)
       .pipe(tap((user) => this._user.next(new AuthenticatedUser(user))));
   }
 

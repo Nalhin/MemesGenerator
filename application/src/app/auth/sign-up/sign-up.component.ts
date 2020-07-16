@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
-  templateUrl: './sign-in.component.html',
+  templateUrl: './sign-up.component.html',
 })
-export class SignInComponent {
+export class SignUpComponent {
   signInForm = this.fb.group({
     username: ['', Validators.required],
     email: ['', Validators.required],
@@ -22,7 +22,7 @@ export class SignInComponent {
 
   onSubmit() {
     this.authService
-      .signIn(this.signInForm.value)
+      .signUp(this.signInForm.value)
       .subscribe(() => this.router.navigate(['/']));
   }
 }

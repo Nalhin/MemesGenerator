@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SignInComponent } from './sign-in/sign-in.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
-import { NoAuthGuard } from '../shared/guards/no-auth.guard';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { NoAuthGuard } from '../core/guards/no-auth.guard';
+import { AuthGuard } from '../core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -14,7 +14,7 @@ const routes: Routes = [
   },
   {
     path: 'sign-in',
-    component: SignInComponent,
+    component: SignUpComponent,
     canActivate: [NoAuthGuard],
   },
   {

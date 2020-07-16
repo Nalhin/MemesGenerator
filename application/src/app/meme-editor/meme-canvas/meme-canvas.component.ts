@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MemeText } from '../meme-text/meme-text.model';
 import { MemesService } from '../../memes/memes.service';
+import { TemplateResponseDto } from '../../shared/interfaces/api.interface';
 
 @Component({
   selector: 'app-meme-canvas',
@@ -25,7 +26,7 @@ export class MemeCanvasComponent implements AfterViewInit, OnChanges {
   memeTexts: MemeText[];
 
   @Input()
-  memeTemplateDetails: Api.TemplateResponseDto;
+  memeTemplateDetails: TemplateResponseDto;
 
   constructor(private readonly memesService: MemesService) {}
 

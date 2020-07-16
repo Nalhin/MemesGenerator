@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SignInComponent } from './sign-in.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { SignUpComponent } from './sign-up.component';
+import { FormBuilder } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
@@ -12,10 +12,12 @@ import {
   authResponseDtoFactory,
   signUpUserDtoFactory,
 } from '../../../../test/fixtures/auth.fixture';
+import { SharedModule } from '../../shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SignInComponent', () => {
-  let component: SignInComponent;
-  let fixture: ComponentFixture<SignInComponent>;
+  let component: SignUpComponent;
+  let fixture: ComponentFixture<SignUpComponent>;
   let authService: AuthService;
   let router: Router;
 
@@ -23,16 +25,17 @@ describe('SignInComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
+        BrowserAnimationsModule,
         HttpClientTestingModule,
-        ReactiveFormsModule,
+        SharedModule,
       ],
       providers: [FormBuilder],
-      declarations: [SignInComponent],
+      declarations: [SignUpComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SignInComponent);
+    fixture = TestBed.createComponent(SignUpComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
@@ -47,7 +50,7 @@ describe('SignInComponent', () => {
     it('should be invalid with empty values', () => {
       expect(component.signInForm.valid).toBeFalsy();
       expect(
-        fixture.debugElement.query(By.css('button')).properties.disabled,
+        fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeTruthy();
     });
 
@@ -64,6 +67,7 @@ describe('SignInComponent', () => {
           });
       }
 
+      fixture.detectChanges();
       expect(
         fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeFalsy();
@@ -75,7 +79,7 @@ describe('SignInComponent', () => {
   describe('onSubmit', () => {
     it('should navigate on login', () => {
       jest
-        .spyOn(authService, 'signIn')
+        .spyOn(authService, 'signUp')
         .mockReturnValueOnce(of(authResponseDtoFactory.buildOne()));
       jest.spyOn(router, 'navigate').mockResolvedValueOnce(true);
 

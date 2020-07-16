@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { map, mergeMap, takeUntil } from 'rxjs/operators';
-import { DragPosition } from '../interfaces/dragPosition';
+import { DragPositionInterface } from '../interfaces/drag-position.interface';
 
 @Directive({
   selector: '[dragged]',
@@ -17,7 +17,7 @@ export class DraggableDirective implements OnInit {
   mouseMove = new EventEmitter<MouseEvent>();
 
   @Output()
-  dragged = new EventEmitter<DragPosition>();
+  dragged = new EventEmitter<DragPositionInterface>();
 
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {

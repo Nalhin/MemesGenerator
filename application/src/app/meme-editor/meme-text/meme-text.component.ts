@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MemeText } from './meme-text.model';
-import { DragPosition } from '../../shared/interfaces/dragPosition';
+import { DragPositionInterface } from '../../shared/interfaces/drag-position.interface';
 import { DraggablePosition } from './draggable-position.model';
 
 @Component({
@@ -37,7 +37,7 @@ export class MemeTextComponent {
   @ViewChild('container') container: ElementRef;
   @ViewChild('handle') handle: ElementRef;
 
-  onDrag(pos: DragPosition): void {
+  onDrag(pos: DragPositionInterface): void {
     const element: HTMLElement = this.container.nativeElement;
     const draggablePosition = new DraggablePosition(pos);
     draggablePosition.setXBound(
@@ -52,7 +52,7 @@ export class MemeTextComponent {
     this.memeText.position.y = draggablePosition.y;
   }
 
-  onResize(pos: DragPosition) {
+  onResize(pos: DragPositionInterface) {
     const element: HTMLElement = this.container.nativeElement;
     const handle: HTMLElement = this.handle.nativeElement;
 

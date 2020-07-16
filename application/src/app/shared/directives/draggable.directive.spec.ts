@@ -2,18 +2,18 @@ import { DraggableDirective } from './draggable.directive';
 import { Component, DebugElement, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { DragPosition } from '../interfaces/dragPosition';
+import { DragPositionInterface } from '../interfaces/drag-position.interface';
 
 @Component({
   selector: 'test',
-  template: '<div appDraggable (dragged)="onDrag($event)"> </div>',
+  template: '<div (dragged)="onDrag($event)"> </div>',
 })
 class TestComponent {
   position = { x: 0, y: 0 };
 
   @ViewChild(DraggableDirective) directive: DraggableDirective;
 
-  onDrag(pos: DragPosition): void {
+  onDrag(pos: DragPositionInterface): void {
     this.position.x = pos.x;
     this.position.y = pos.y;
   }

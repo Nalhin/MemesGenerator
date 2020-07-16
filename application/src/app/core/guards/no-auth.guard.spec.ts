@@ -1,9 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
 import { NoAuthGuard } from './no-auth.guard';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../services/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { AnonymousUser, AuthenticatedUser } from '../../auth/auth-user.model';
+import {
+  AnonymousUser,
+  AuthenticatedUser,
+} from '../../shared/models/auth-user.model';
 
 describe('NoAuthGuard', () => {
   let guard: NoAuthGuard;

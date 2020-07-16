@@ -1,16 +1,18 @@
 import { TestBed } from '@angular/core/testing';
-
-import { AuthService } from './auth.service';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { AnonymousUser, AuthenticatedUser } from './auth-user.model';
+import {
+  AnonymousUser,
+  AuthenticatedUser,
+} from '../../shared/models/auth-user.model';
+import { AuthService } from './auth.service';
 import {
   authResponseDtoFactory,
   loginUserDtoFactory,
   signUpUserDtoFactory,
-} from '../../../test/fixtures/auth.fixture';
+} from '../../../../test/fixtures/auth.fixture';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -52,7 +54,7 @@ describe('AuthService', () => {
     const response = authResponseDtoFactory.buildOne();
 
     it('should signIn user correctly', (done) => {
-      service.signIn(mockSignUpUser).subscribe(() => {
+      service.signUp(mockSignUpUser).subscribe(() => {
         expect(response).toEqual(response);
         done();
       });
@@ -64,7 +66,7 @@ describe('AuthService', () => {
 
   describe('onAuth', () => {
     it('should activate after successful authentication', (done) => {
-      service.signIn(signUpUserDtoFactory.buildOne()).subscribe();
+      service.signUp(signUpUserDtoFactory.buildOne()).subscribe();
       service.onAuth().subscribe((authUser) => {
         expect(authUser).toBeInstanceOf(AuthenticatedUser);
         done();
@@ -77,7 +79,7 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should logout the current user', () => {
-      service.signIn(signUpUserDtoFactory.buildOne()).subscribe();
+      service.signUp(signUpUserDtoFactory.buildOne()).subscribe();
 
       const req = httpTestingController.expectOne('/auth/sign-up');
       req.flush(authResponseDtoFactory.buildOne());

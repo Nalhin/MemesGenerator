@@ -21,14 +21,14 @@
               "path": "./webpack.config.js"
             },
             "outputPath": "dist/application",
-            "index": "public/index.html",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "public/favicon.ico",
-              "public/assets"
+              "src/favicon.ico",
+              "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",

@@ -4,14 +4,16 @@ import { LoginComponent } from './login.component';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import {
   authResponseDtoFactory,
   loginUserDtoFactory,
 } from '../../../../test/fixtures/auth.fixture';
+import { SharedModule } from '../../shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -23,8 +25,9 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
+        BrowserAnimationsModule,
         HttpClientTestingModule,
-        ReactiveFormsModule,
+        SharedModule,
       ],
       providers: [FormBuilder],
       declarations: [LoginComponent],
@@ -47,7 +50,7 @@ describe('LoginComponent', () => {
     it('should be invalid with empty values', () => {
       expect(component.loginForm.valid).toBeFalsy();
       expect(
-        fixture.debugElement.query(By.css('button')).properties.disabled,
+        fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeTruthy();
     });
 
@@ -64,6 +67,7 @@ describe('LoginComponent', () => {
           });
       }
 
+      fixture.detectChanges();
       expect(
         fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeFalsy();

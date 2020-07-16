@@ -1,8 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AuthGuard } from './auth.guard';
-import { AuthService } from '../../auth/auth.service';
-import { AnonymousUser, AuthenticatedUser } from '../../auth/auth-user.model';
+import { AuthService } from '../services/auth.service';
+import {
+  AnonymousUser,
+  AuthenticatedUser,
+} from '../../shared/models/auth-user.model';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AuthGuard', () => {
