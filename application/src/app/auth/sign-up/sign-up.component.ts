@@ -4,11 +4,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-sign-in',
+  selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.scss'],
 })
 export class SignUpComponent {
-  signInForm = this.fb.group({
+  signUpForm = this.fb.group({
     username: ['', Validators.required],
     email: ['', Validators.required],
     password: ['', Validators.required],
@@ -22,7 +23,7 @@ export class SignUpComponent {
 
   onSubmit() {
     this.authService
-      .signUp(this.signInForm.value)
+      .signUp(this.signUpForm.value)
       .subscribe(() => this.router.navigate(['/']));
   }
 }

@@ -1,23 +1,25 @@
-<form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
-  <mat-form-field>
-    <label for="username">
-      Username
-    </label>
-    <input matInput id="username" type="text" formControlName="username" />
-  </mat-form-field>
-  <mat-form-field>
-    <label for="email">
-      Email
-    </label>
-    <input matInput id="email" type="text" formControlName="email" />
-  </mat-form-field>
-  <mat-form-field>
-    <label for="password">
-      Password
-    </label>
-    <input matInput id="password" type="password" formControlName="password" />
-  </mat-form-field>
-  <button mat-button type="submit" class="py-2" [disabled]="!signInForm.valid">
-    Sign in
-  </button>
-</form>
+<mat-card class="card-container">
+  <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="form">
+    <mat-form-field>
+      <mat-label>
+        Username
+      </mat-label>
+      <input matInput  type="text" formControlName="username"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Email
+      </mat-label>
+      <input matInput type="text" formControlName="email"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Password
+      </mat-label>
+      <input matInput type="password" formControlName="password"/>
+    </mat-form-field>
+    <button mat-flat-button type="submit" color="primary" [disabled]="!signUpForm.valid">
+      Sign up
+    </button>
+  </form>
+</mat-card>

@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SignUpComponent } from './sign-up.component';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
@@ -48,7 +47,7 @@ describe('SignInComponent', () => {
 
   describe('signInForm', () => {
     it('should be invalid with empty values', () => {
-      expect(component.signInForm.valid).toBeFalsy();
+      expect(component.signUpForm.valid).toBeFalsy();
       expect(
         fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeTruthy();
@@ -59,7 +58,7 @@ describe('SignInComponent', () => {
 
       for (const [key, value] of Object.entries(signUpUserDto)) {
         fixture.debugElement
-          .query(By.css(`#${key}`))
+          .query(By.css(`input[formcontrolname=${key}]`))
           .triggerEventHandler('input', {
             target: {
               value,
@@ -71,8 +70,8 @@ describe('SignInComponent', () => {
       expect(
         fixture.debugElement.query(By.css('button')).attributes.disabled,
       ).toBeFalsy();
-      expect(component.signInForm.valid).toBeTruthy();
-      expect(component.signInForm.value).toEqual(signUpUserDto);
+      expect(component.signUpForm.valid).toBeTruthy();
+      expect(component.signUpForm.value).toEqual(signUpUserDto);
     });
   });
 
@@ -83,7 +82,7 @@ describe('SignInComponent', () => {
         .mockReturnValueOnce(of(authResponseDtoFactory.buildOne()));
       jest.spyOn(router, 'navigate').mockResolvedValueOnce(true);
 
-      component.signInForm.setValue(signUpUserDtoFactory.buildOne());
+      component.signUpForm.setValue(signUpUserDtoFactory.buildOne());
       component.onSubmit();
 
       expect(router.navigate).toHaveBeenCalledTimes(1);

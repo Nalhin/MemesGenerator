@@ -13,7 +13,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'sign-in',
+    path: 'sign-up',
     component: SignUpComponent,
     canActivate: [NoAuthGuard],
   },

@@ -4,7 +4,7 @@
   </button>
   <h1>Memes Generator</h1>
 </mat-toolbar>
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="content">
   <mat-sidenav
     #sidenav
     [mode]="'over'"
@@ -14,9 +14,9 @@
     <mat-nav-list>
       <a
         mat-list-item
-        routerLink="/auth/sign-in"
+        routerLink="/auth/sign-up"
         *ngIf="!(isAuthenticated$ | async)"
-        >Sign in
+        >Sign up
       </a>
       <a
         mat-list-item
@@ -37,7 +37,7 @@
       </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content class="sidenav-content">
+  <mat-sidenav-content class="content">
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

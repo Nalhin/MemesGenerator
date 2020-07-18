@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LoginComponent } from './login.component';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -59,7 +58,7 @@ describe('LoginComponent', () => {
 
       for (const [key, value] of Object.entries(loginUserDto)) {
         fixture.debugElement
-          .query(By.css(`#${key}`))
+          .query(By.css(`input[formcontrolname=${key}]`))
           .triggerEventHandler('input', {
             target: {
               value,

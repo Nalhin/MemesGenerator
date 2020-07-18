@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
 
 const MAT_MODULES = [
   MatInputModule,
@@ -14,6 +15,7 @@ const MAT_MODULES = [
   MatButtonModule,
   MatIconModule,
   MatListModule,
+  MatCardModule,
 ];
 
 const SHARED_MODULES = [CommonModule, ReactiveFormsModule];
