@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MemeText } from './meme-text.model';
-import { DragPositionInterface } from '../../shared/interfaces/drag-position.interface';
+import { DragPositionInterface } from '../../../shared/interfaces/drag-position.interface';
 import { DraggablePosition } from './draggable-position.model';
 
 @Component({

@@ -7,8 +7,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MemeText } from '../meme-text/meme-text.model';
-import { MemesService } from '../../memes/memes.service';
-import { TemplateResponseDto } from '../../shared/interfaces/api.interface';
+import { MemesService } from '../../../memes/memes.service';
+import { TemplateResponseDto } from '../../../shared/interfaces/api.interface';
 
 @Component({
   selector: 'app-meme-canvas',

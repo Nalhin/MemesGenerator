@@ -16,18 +16,18 @@
         mat-list-item
         routerLink="/auth/sign-up"
         *ngIf="!(isAuthenticated$ | async)"
-        >Sign up
+      >Sign up
       </a>
       <a
         mat-list-item
         routerLink="/auth/login"
         *ngIf="!(isAuthenticated$ | async)"
-        >Login
+      >Login
       </a>
       <a mat-list-item routerLink="/memes">
         Memes
       </a>
-      <a mat-list-item routerLink="/templates">Templates </a>
+      <a mat-list-item routerLink="/templates">Templates</a>
       <a
         mat-list-item
         *ngIf="isAuthenticated$ | async"
