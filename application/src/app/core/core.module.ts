@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 import { LayoutModule } from './layout/layout.module';
-import { RequestLoadingInterceptor } from './interceptors/request-loading.interceptor';
+import { LoadingInterceptor } from './interceptors/loading.interceptor';
 
 @NgModule({
   declarations: [],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: RequestLoadingInterceptor,
+      useClass: LoadingInterceptor,
       multi: true,
     },
     {

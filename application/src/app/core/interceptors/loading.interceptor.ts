@@ -6,20 +6,22 @@ import {
   HttpInterceptor,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RequestLoadingService } from '../services/request-loading.service';
+import { LoadingService } from '../services/loading.service';
 import { finalize } from 'rxjs/operators';
 
 @Injectable()
-export class RequestLoadingInterceptor implements HttpInterceptor {
-  constructor(private readonly requestLoadingService: RequestLoadingService) {}
+export class LoadingInterceptor implements HttpInterceptor {
+  constructor(private readonly requestLoadingService: LoadingService) {}
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
-    this.requestLoadingService.incrementLoadingCount();
+    this.requestLoadingService.incrementLoadingRequests();
     return next
       .handle(request)
-      .pipe(finalize(() => this.requestLoadingService.decrementLoadingCount()));
+      .pipe(
+        finalize(() => this.requestLoadingService.decrementLoadingRequests()),
+      );
   }
 }

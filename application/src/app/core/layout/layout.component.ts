@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RequestLoadingService } from '../services/request-loading.service';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,7 +10,7 @@ import { RequestLoadingService } from '../services/request-loading.service';
 export class LayoutComponent implements OnInit {
   isLoading$: Observable<boolean>;
 
-  constructor(private readonly requestLoadingService: RequestLoadingService) {}
+  constructor(private readonly requestLoadingService: LoadingService) {}
 
   ngOnInit(): void {
     this.isLoading$ = this.requestLoadingService.isLoading();
