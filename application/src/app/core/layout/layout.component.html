@@ -1,0 +1,9 @@
+<app-navigation>
+  <mat-progress-bar
+    *ngIf="isLoading$ | async"
+    mode="indeterminate"
+    class="loader"
+  ></mat-progress-bar>
+  <ng-content></ng-content>
+  <app-footer></app-footer>
+</app-navigation>

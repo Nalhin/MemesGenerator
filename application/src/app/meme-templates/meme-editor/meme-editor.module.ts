@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 import { MemeEditorComponent } from './meme-editor.component';
 import { MemeCanvasComponent } from './meme-canvas/meme-canvas.component';
 import { MemeTextComponent } from './meme-text/meme-text.component';
