@@ -12,6 +12,7 @@ import {
   LoginUserDto,
   SignUpUserDto,
 } from '../../shared/interfaces/api.interface';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,15 @@ export class AuthService {
     new AnonymousUser(),
   );
 
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(
+    private readonly httpClient: HttpClient,
+    private readonly userService: UserService,
+  ) {}
+
+  async onInit(): Promise<void> {
+    const user = await this.userService.me().toPromise();
+    this._user.next(new AuthenticatedUser(user));
+  }
 
   login(loginUser: LoginUserDto) {
     return this.httpClient.post<AuthResponseDto>('/auth/login', loginUser).pipe(

@@ -1,8 +1,9 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { APP_INITIALIZER, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 import { LayoutModule } from './layout/layout.module';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [],
@@ -10,6 +11,14 @@ import { LayoutModule } from './layout/layout.module';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BaseUrlInterceptor,
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService) => (): Promise<void> => {
+        return authService.onInit();
+      },
+      deps: [AuthService],
       multi: true,
     },
   ],
