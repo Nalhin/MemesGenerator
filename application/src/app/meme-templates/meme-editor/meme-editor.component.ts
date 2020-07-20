@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MemeText, Size } from './meme-text/meme-text.model';
-import { TemplateResponseDto } from '../shared/interfaces/api.interface';
+import { TemplateResponseDto } from '../../shared/interfaces/api.interface';
 
 @Component({
   selector: 'app-meme-editor',

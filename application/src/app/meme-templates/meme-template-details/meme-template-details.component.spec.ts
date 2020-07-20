@@ -7,7 +7,7 @@ import {
 } from '@angular/core/testing';
 
 import { MemeTemplateDetailsComponent } from './meme-template-details.component';
-import { MemeEditorModule } from '../../meme-editor/meme-editor.module';
+import { MemeEditorModule } from '../meme-editor/meme-editor.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MemeTemplatesService } from '../meme-templates.service';
