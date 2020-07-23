@@ -26,7 +26,7 @@ public class AuthUserDetailsService implements UserDetailsService {
             (user) ->
                 AuthUser.authUserBuilder()
                     .username(user.getUsername())
-                    .id(user.getId())
+                    .user(user)
                     .password(user.getPassword())
                     .accountNonExpired(true)
                     .accountNonLocked(true)

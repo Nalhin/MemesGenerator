@@ -85,8 +85,7 @@ class MemeServiceTest {
     AuthUser authUser = mock(AuthUser.class);
     User author = random.nextObject(User.class);
     Template template = random.nextObject(Template.class);
-    when(authUser.getId()).thenReturn(author.getId());
-    when(entityManager.getReference(User.class, author.getId())).thenReturn(author);
+    when(authUser.getUser()).thenReturn(author);
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))
         .thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());

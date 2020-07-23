@@ -39,7 +39,7 @@ public class MemeService {
       throws IOException {
     Meme meme = new Meme();
     if (authUser != null) {
-      meme.setAuthor(entityManager.getReference(User.class, authUser.getId()));
+      meme.setAuthor(authUser.getUser());
     }
     meme.setTemplate(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()));
     meme.setUrl(fileUploadService.uploadFile(file, UUID.randomUUID().toString() + ".jpg"));

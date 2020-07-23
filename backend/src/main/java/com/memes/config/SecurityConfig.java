@@ -5,6 +5,7 @@ import com.memes.auth.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,16 +29,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(final HttpSecurity http) throws Exception {
     http.csrf().disable();
 
+    http.cors();
+
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.authorizeRequests()
-        .antMatchers("/auth/**", "/api/users/all", "/api/templates/**", "/api/memes/**")
-        .permitAll()
         .anyRequest()
-        .authenticated()
-        .and()
-        .addFilterBefore(
-            new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+        .authenticated();
+
+    http.addFilterBefore(
+        new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override

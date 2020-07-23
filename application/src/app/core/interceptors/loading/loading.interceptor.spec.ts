@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { LoadingInterceptor } from './loading.interceptor';
 import { HttpRequest } from '@angular/common/http';
-import { LoadingService } from '../services/loading.service';
+import { LoadingService } from '../../services/loading/loading.service';
 import { of } from 'rxjs';
 
 describe('LoadingInterceptor', () => {

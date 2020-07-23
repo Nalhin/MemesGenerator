@@ -1,16 +1,16 @@
 package com.memes.auth;
 
+import com.memes.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
 @Getter
-public class AuthUser extends User {
+public class AuthUser extends org.springframework.security.core.userdetails.User {
 
-  private final Long id;
+  private final User user;
 
   @Builder(builderMethodName = "authUserBuilder")
   public AuthUser(
@@ -21,7 +21,7 @@ public class AuthUser extends User {
       boolean credentialsNonExpired,
       boolean accountNonLocked,
       Collection<? extends GrantedAuthority> authorities,
-      Long id) {
+      User user) {
     super(
         username,
         password,
@@ -30,6 +30,6 @@ public class AuthUser extends User {
         credentialsNonExpired,
         accountNonLocked,
         authorities);
-    this.id = id;
+    this.user = user;
   }
 }

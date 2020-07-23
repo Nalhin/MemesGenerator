@@ -1,10 +1,11 @@
 import { APP_INITIALIZER, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
+import { BaseUrlInterceptor } from './interceptors/base-url/base-url.interceptor';
 import { LayoutModule } from './layout/layout.module';
-import { AuthService } from './services/auth.service';
-import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { AuthService } from './services/auth/auth.service';
+import { LoadingInterceptor } from './interceptors/loading/loading.interceptor';
+import { AuthHeaderInterceptor } from './interceptors/auth-header/auth-header.interceptor';
 
 @NgModule({
   declarations: [],
@@ -17,6 +18,11 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BaseUrlInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthHeaderInterceptor,
       multi: true,
     },
     {
