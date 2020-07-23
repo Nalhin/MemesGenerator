@@ -8,15 +8,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -39,24 +42,31 @@ class AuthServiceTest {
 
   @Test
   void login() {
+    Authentication mockAuth = mock(Authentication.class);
+    AuthUser mockAuthUser = mock(AuthUser.class);
     when(jwtService.sign(user.getUsername())).thenReturn(token);
+    when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        .thenReturn(mockAuth);
+    when(mockAuthUser.getUser()).thenReturn(user);
+    when(mockAuth.getPrincipal()).thenReturn(mockAuthUser);
 
-    String result = authService.login(user.getUsername(), user.getPassword());
+    Pair<User, String> result = authService.login(user.getUsername(), user.getPassword());
 
-    assertEquals(token, result);
+    assertEquals(token, result.getSecond());
     verify(authenticationManager)
         .authenticate(
-            new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getPassword()));
+            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
   }
 
   @Test
   void signUp() {
     when(jwtService.sign(user.getUsername())).thenReturn(token);
+    when(userService.save(any(User.class))).thenReturn(user);
 
-    String result = authService.signUp(user);
+    Pair<User, String> result = authService.signUp(user);
 
-    assertEquals(token, result);
+    assertEquals(user, result.getFirst());
+    assertEquals(token, result.getSecond());
     verify(passwordEncoder).encode(anyString());
     verify(userService).save(any(User.class));
   }

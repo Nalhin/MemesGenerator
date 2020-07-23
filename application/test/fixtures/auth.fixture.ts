@@ -5,6 +5,7 @@ import {
   LoginUserDto,
   SignUpUserDto,
 } from '../../src/app/shared/interfaces/api.interface';
+import { userResponseDtoFactory } from './users.fixture';
 
 export const loginUserDtoFactory = new Factory<LoginUserDto>()
   .props({
@@ -16,6 +17,7 @@ export const loginUserDtoFactory = new Factory<LoginUserDto>()
 export const authResponseDtoFactory = new Factory<AuthResponseDto>()
   .props({
     token: faker.random.word,
+    user: userResponseDtoFactory.buildOne,
   })
   .done();
 

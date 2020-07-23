@@ -45,8 +45,7 @@ class UserControllerTest {
   @Test
   void me() {
     AuthUser mockUser = mock(AuthUser.class);
-    when(mockUser.getUsername()).thenReturn(user.getUsername());
-    when(userService.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    when(mockUser.getUser()).thenReturn(user);
 
     UserResponseDto result = userController.me(mockUser);
 

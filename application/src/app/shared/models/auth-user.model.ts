@@ -3,10 +3,9 @@ export abstract class User {
   readonly email: string;
   readonly id: number;
   readonly roles: string[] = [];
-  readonly token: string;
 
   protected constructor(partial: Partial<User> = {}) {
-    Object.assign(partial);
+    Object.assign(this, partial);
   }
 
   abstract get isAuthenticated(): boolean;

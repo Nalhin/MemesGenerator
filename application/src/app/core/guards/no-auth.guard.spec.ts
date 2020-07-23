@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { NoAuthGuard } from './no-auth.guard';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   AnonymousUser,
@@ -25,7 +25,7 @@ describe('NoAuthGuard', () => {
   describe('canActivate', () => {
     it('should be falsy if user is authenticated', () => {
       jest
-        .spyOn(authService, 'user', 'get')
+        .spyOn(authService, 'currentUser', 'get')
         .mockReturnValueOnce(new AuthenticatedUser({}));
 
       const result = guard.canActivate({} as any, null as any);
@@ -35,7 +35,7 @@ describe('NoAuthGuard', () => {
 
     it('should be truthy if user is not authenticated', () => {
       jest
-        .spyOn(authService, 'user', 'get')
+        .spyOn(authService, 'currentUser', 'get')
         .mockReturnValueOnce(new AnonymousUser());
 
       const result = guard.canActivate({} as any, null as any);

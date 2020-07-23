@@ -4,7 +4,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { userResponseDtoFactory } from '../../../../test/fixtures/users.fixture';
+import { userResponseDtoFactory } from '../../../../../test/fixtures/users.fixture';
 
 describe('UserService', () => {
   let service: UserService;

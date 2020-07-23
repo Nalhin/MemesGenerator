@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
@@ -20,7 +20,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.authService.isAuthenticated().subscribe((val) => {
+      this.authService.isAuthenticated$.subscribe((val) => {
         this.isAuthenticated = val;
       }),
     );

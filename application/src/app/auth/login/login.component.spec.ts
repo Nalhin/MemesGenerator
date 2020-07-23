@@ -3,7 +3,7 @@ import { LoginComponent } from './login.component';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';

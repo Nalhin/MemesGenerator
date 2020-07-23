@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserResponseDto } from '../../shared/interfaces/api.interface';
+import { UserResponseDto } from '../../../shared/interfaces/api.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({

@@ -41,7 +41,7 @@
     "canvas": "^2.6.1",
     "codelyzer": "^5.1.2",
     "dotenv-webpack": "^1.8.0",
-    "factory.io": "0.0.6",
+    "factory.io": "0.0.7",
     "faker": "^4.1.0",
     "jest": "^26.1.0",
     "jest-preset-angular": "^8.2.1",

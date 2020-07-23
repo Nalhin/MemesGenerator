@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoadingService } from '../services/loading.service';
+import { LoadingService } from '../services/loading/loading.service';
 
 @Component({
   selector: 'app-layout',

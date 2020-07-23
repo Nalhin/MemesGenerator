@@ -12,6 +12,7 @@
 
 export interface AuthResponseDto {
   token?: string;
+  user?: UserResponseDto;
 }
 
 export interface File {
