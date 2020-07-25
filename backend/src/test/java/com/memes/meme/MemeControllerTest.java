@@ -2,13 +2,13 @@ package com.memes.meme;
 
 import com.memes.meme.dto.MemeResponseDto;
 import com.memes.meme.dto.SaveMemeDto;
+import com.memes.shared.utils.CustomModelMapper;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockMultipartFile;
@@ -32,7 +32,7 @@ class MemeControllerTest {
 
   @BeforeEach
   void setUp() {
-    memeController = new MemeController(memeService, new ModelMapper());
+    memeController = new MemeController(memeService, new CustomModelMapper());
   }
 
   @Test

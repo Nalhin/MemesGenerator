@@ -1,6 +1,7 @@
 package com.memes.user;
 
 import com.memes.auth.AuthUser;
+import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.dto.UserResponseDto;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,12 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -28,7 +27,7 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    userController = new UserController(userService, new ModelMapper());
+    userController = new UserController(userService, new CustomModelMapper());
     user = new EasyRandom().nextObject(User.class);
   }
 
@@ -37,9 +36,10 @@ class UserControllerTest {
     List<User> mockUsers = Arrays.asList(user, user);
     when(userService.findAll()).thenReturn(mockUsers);
 
-    List<UserResponseDto> result = userController.getAll();
+    ResponseEntity<List<UserResponseDto>> result = userController.getAll();
 
-    assertEquals(mockUsers.size(), result.size());
+    assertNotNull(result.getBody());
+    assertEquals(mockUsers.size(), result.getBody().size());
   }
 
   @Test
@@ -47,8 +47,9 @@ class UserControllerTest {
     AuthUser mockUser = mock(AuthUser.class);
     when(mockUser.getUser()).thenReturn(user);
 
-    UserResponseDto result = userController.me(mockUser);
+    ResponseEntity<UserResponseDto> result = userController.me(mockUser);
 
-    assertEquals(user.getUsername(), result.getUsername());
+    assertNotNull(result.getBody());
+    assertEquals(user.getUsername(), result.getBody().getUsername());
   }
 }

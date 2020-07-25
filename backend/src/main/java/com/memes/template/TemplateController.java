@@ -1,14 +1,16 @@
 package com.memes.template;
 
+import com.memes.shared.utils.CustomModelMapper;
 import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(path = "/api/templates")
@@ -17,29 +19,35 @@ import org.springframework.web.bind.annotation.*;
 public class TemplateController {
 
   private final TemplateService templateService;
-  private final ModelMapper modelMapper;
+  private final CustomModelMapper customModelMapper;
 
   @GetMapping(path = "/{templateId}")
   @ApiOperation(value = "Get template by id")
-  public @ResponseBody TemplateResponseDto getById(@PathVariable Long templateId) {
-    return modelMapper.map(templateService.getOneById(templateId), TemplateResponseDto.class);
+  public ResponseEntity<TemplateResponseDto> getById(@PathVariable Long templateId) {
+    TemplateResponseDto templateResponseDto =
+        customModelMapper.map(templateService.getOneById(templateId), TemplateResponseDto.class);
+
+    return ResponseEntity.ok(templateResponseDto);
   }
 
-  @GetMapping
+  @GetMapping(path = "")
   @ApiOperation(value = "Get templates page")
-  public @ResponseBody Page<TemplateResponseDto> getAll(
+  public ResponseEntity<Page<TemplateResponseDto>> getAll(
       @RequestParam(name = "page", defaultValue = "0") int page) {
-    return templateService
-        .findAll(page)
-        .map(template -> modelMapper.map(template, TemplateResponseDto.class));
+    Page<TemplateResponseDto> templateResponseDtoPage =
+        templateService
+            .findAll(page)
+            .map(template -> customModelMapper.map(template, TemplateResponseDto.class));
+    return ResponseEntity.ok(templateResponseDtoPage);
   }
 
-  @PostMapping(path="/save")
+  @PostMapping(path = "/save")
   @ApiOperation(value = "Save template")
-  public @ResponseBody TemplateResponseDto addTemplate(
+  public ResponseEntity<TemplateResponseDto> addTemplate(
       @RequestBody SaveTemplateDto saveTemplateDto) {
-    return modelMapper.map(
-        templateService.save(modelMapper.map(saveTemplateDto, Template.class)),
-        TemplateResponseDto.class);
+    Template savedTemplate =
+        templateService.save(customModelMapper.map(saveTemplateDto, Template.class));
+    return ResponseEntity.created(URI.create("/" + savedTemplate.getId()))
+        .body(customModelMapper.map(savedTemplate, TemplateResponseDto.class));
   }
 }

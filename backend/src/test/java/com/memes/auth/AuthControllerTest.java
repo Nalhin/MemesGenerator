@@ -3,6 +3,7 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
+import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.User;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Pair;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +27,7 @@ class AuthControllerTest {
 
   @BeforeEach
   void setUp() {
-    authController = new AuthController(authService, new ModelMapper());
+    authController = new AuthController(authService, new CustomModelMapper());
     user = new EasyRandom().nextObject(User.class);
   }
 

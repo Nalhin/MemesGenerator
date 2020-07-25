@@ -1,22 +1,23 @@
 package com.memes.user;
 
 import com.memes.auth.AuthUser;
+import com.memes.shared.annotations.Authenticated;
+import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.dto.UserResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/users")
@@ -25,21 +26,19 @@ import java.util.stream.Collectors;
 public class UserController {
 
   private final UserService userService;
-  private final ModelMapper modelMapper;
+  private final CustomModelMapper customModelMapper;
 
   @GetMapping
   @ApiOperation(value = "Get users")
-  public @ResponseBody List<UserResponseDto> getAll() {
-    return this.userService.findAll().stream()
-        .map(u -> modelMapper.map(u, UserResponseDto.class))
-        .collect(Collectors.toList());
+  public ResponseEntity<List<UserResponseDto>> getAll() {
+    return ResponseEntity.ok(
+        customModelMapper.mapList(this.userService.findAll(), UserResponseDto.class));
   }
 
-  @GetMapping(path = "/me")
-  @ApiOperation(
-      value = "Get current user",
-      authorizations = {@Authorization(value = "Bearer %token")})
-  public @ResponseBody UserResponseDto me(@AuthenticationPrincipal AuthUser authUser) {
-    return modelMapper.map(authUser.getUser(), UserResponseDto.class);
+  @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Get currently logged user"))
+  @Authenticated
+  public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal AuthUser authUser) {
+    return ResponseEntity.ok(customModelMapper.map(authUser.getUser(), UserResponseDto.class));
   }
 }
