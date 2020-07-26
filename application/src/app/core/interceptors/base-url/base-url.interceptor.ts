@@ -14,7 +14,7 @@ export class BaseUrlInterceptor implements HttpInterceptor {
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
     const apiReq = request.clone({
-      url: `${process.env.BACKEND_ADDRESS ?? 'http://localhost:8000'}${
+      url: `${process.env.BACKEND_ADDRESS ?? 'http://localhost:8000'}/api/v1${
         request.url
       }`,
     });

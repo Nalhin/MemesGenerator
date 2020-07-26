@@ -13,32 +13,29 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/users")
 @Api(tags = "users")
 @RequiredArgsConstructor
 public class UserController {
 
   private final UserService userService;
-  private final CustomModelMapper customModelMapper;
+  private final CustomModelMapper modelMapper;
 
-  @GetMapping
+  @GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Get users")
   public ResponseEntity<List<UserResponseDto>> getAll() {
     return ResponseEntity.ok(
-        customModelMapper.mapList(this.userService.findAll(), UserResponseDto.class));
+        modelMapper.mapList(this.userService.findAll(), UserResponseDto.class));
   }
 
-  @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiResponses(@ApiResponse(responseCode = "200", description = "Get currently logged user"))
   @Authenticated
   public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal AuthUser authUser) {
-    return ResponseEntity.ok(customModelMapper.map(authUser.getUser(), UserResponseDto.class));
+    return ResponseEntity.ok(modelMapper.map(authUser.getUser(), UserResponseDto.class));
   }
 }

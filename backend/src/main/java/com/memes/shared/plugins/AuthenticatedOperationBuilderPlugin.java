@@ -1,15 +1,12 @@
 package com.memes.shared.plugins;
 
 import com.memes.shared.annotations.Authenticated;
-import com.memes.user.dto.UserResponseDto;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ResponseBuilder;
-import springfox.documentation.schema.ScalarType;
 import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.Response;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.OperationBuilderPlugin;
@@ -49,7 +46,7 @@ public class AuthenticatedOperationBuilderPlugin implements OperationBuilderPlug
                                                           name ->
                                                               name.namespace("com.memes.shared")
                                                                   .name(
-                                                                      "UnauthorizedException"))))))
+                                                                      "UnauthorizedExceptionDto"))))))
                       .build()))
           .authorizations(
               Collections.singletonList(

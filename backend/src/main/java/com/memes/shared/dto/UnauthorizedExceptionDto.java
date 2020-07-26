@@ -1,10 +1,10 @@
-package com.memes.shared;
+package com.memes.shared.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class UnauthorizedException {
+public class UnauthorizedExceptionDto {
   private String message;
 
   @ApiModelProperty(value = "401", example = "401")

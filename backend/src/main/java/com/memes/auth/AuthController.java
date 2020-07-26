@@ -10,34 +10,34 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/auth")
 @Api(tags = "auth")
 @RequiredArgsConstructor
 public class AuthController {
 
   private final AuthService authService;
-  private final CustomModelMapper customModelMapper;
+  private final CustomModelMapper modelMapper;
 
-  @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-  public AuthResponseDto login(@RequestBody LoginUserDto loginUserDto) {
+  @PostMapping(path = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<AuthResponseDto> login(@RequestBody LoginUserDto loginUserDto) {
     AuthResponseDto authResponseDto = new AuthResponseDto();
     Pair<User, String> result =
         authService.login(loginUserDto.getUsername(), loginUserDto.getUsername());
     authResponseDto.setToken(result.getSecond());
-    authResponseDto.setUser(customModelMapper.map(result.getFirst(), UserResponseDto.class));
-    return authResponseDto;
+    authResponseDto.setUser(modelMapper.map(result.getFirst(), UserResponseDto.class));
+    return ResponseEntity.ok(authResponseDto);
   }
 
-  @PostMapping(path = "/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
-  public AuthResponseDto signUp(@RequestBody SignUpUserDto signUpUserDto) {
+  @PostMapping(path = "/auth/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<AuthResponseDto> signUp(@RequestBody SignUpUserDto signUpUserDto) {
     AuthResponseDto authResponseDto = new AuthResponseDto();
     Pair<User, String> result =
-        authService.signUp(customModelMapper.map(signUpUserDto, User.class));
+        authService.signUp(modelMapper.map(signUpUserDto, User.class));
     authResponseDto.setToken(result.getSecond());
-    authResponseDto.setUser(customModelMapper.map(result.getFirst(), UserResponseDto.class));
-    return authResponseDto;
+    authResponseDto.setUser(modelMapper.map(result.getFirst(), UserResponseDto.class));
+    return ResponseEntity.ok(authResponseDto);
   }
 }

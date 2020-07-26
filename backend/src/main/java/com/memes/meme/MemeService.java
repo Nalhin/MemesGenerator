@@ -4,7 +4,6 @@ import com.memes.auth.AuthUser;
 import com.memes.meme.dto.SaveMemeDto;
 import com.memes.template.Template;
 import com.memes.upload.FileUploadService;
-import com.memes.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -12,6 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.stream.Collectors;
 
@@ -58,6 +61,8 @@ class TemplateControllerTest {
 
   @Test
   void addTemplate() {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     Template savedTemplate = random.nextObject(Template.class);
     when(templateService.save(any(Template.class))).thenReturn(savedTemplate);
 

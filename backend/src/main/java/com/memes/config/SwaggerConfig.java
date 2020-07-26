@@ -2,7 +2,7 @@ package com.memes.config;
 
 import com.fasterxml.classmate.TypeResolver;
 import com.memes.auth.AuthUser;
-import com.memes.shared.UnauthorizedException;
+import com.memes.shared.dto.UnauthorizedExceptionDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +30,7 @@ public class SwaggerConfig {
         .paths(PathSelectors.any())
         .build()
         .useDefaultResponseMessages(false)
-        .additionalModels(typeResolver.resolve(UnauthorizedException.class))
+        .additionalModels(typeResolver.resolve(UnauthorizedExceptionDto.class))
         .apiInfo(metadata())
         .securitySchemes(Collections.singletonList(apiKey()));
   }

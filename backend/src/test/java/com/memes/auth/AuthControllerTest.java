@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,9 +38,10 @@ class AuthControllerTest {
     LoginUserDto loginUserDto = new EasyRandom().nextObject(LoginUserDto.class);
     when(authService.login(anyString(), anyString())).thenReturn(Pair.of(user, token));
 
-    AuthResponseDto result = authController.login(loginUserDto);
+    ResponseEntity<AuthResponseDto> result = authController.login(loginUserDto);
 
-    assertEquals(token, result.getToken());
+    assertNotNull(result.getBody());
+    assertEquals(token, result.getBody().getToken());
   }
 
   @Test
@@ -48,8 +50,9 @@ class AuthControllerTest {
     SignUpUserDto signUpUserDto = new EasyRandom().nextObject(SignUpUserDto.class);
     when(authService.signUp(any())).thenReturn(Pair.of(user, token));
 
-    AuthResponseDto result = authController.signUp(signUpUserDto);
+    ResponseEntity<AuthResponseDto> result = authController.signUp(signUpUserDto);
 
-    assertEquals(token, result.getToken());
+    assertNotNull(result.getBody());
+    assertEquals(token, result.getBody().getToken());
   }
 }
