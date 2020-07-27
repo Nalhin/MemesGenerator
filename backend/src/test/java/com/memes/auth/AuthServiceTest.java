@@ -6,6 +6,7 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
@@ -25,19 +26,18 @@ class AuthServiceTest {
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private UserService userService;
 
-  private AuthService authService;
+  @InjectMocks private AuthService authService;
 
   private User user;
   private final String token = "token";
 
   @BeforeEach
   void setUp() {
-    authService = new AuthService(jwtService, authenticationManager, passwordEncoder, userService);
     user = new EasyRandom().nextObject(User.class);
   }
 
   @Test
-  void login() {
+  void login_ValidCredentials_ReturnsUser() {
     Authentication mockAuth = mock(Authentication.class);
     AuthUser mockAuthUser = mock(AuthUser.class);
     when(jwtService.sign(user.getUsername())).thenReturn(token);
@@ -55,7 +55,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void signUp() {
+  void signUp_NoConflict_ReturnsUser() {
     when(jwtService.sign(user.getUsername())).thenReturn(token);
     when(userService.save(any(User.class))).thenReturn(user);
 

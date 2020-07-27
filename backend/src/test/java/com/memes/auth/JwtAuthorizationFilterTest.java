@@ -3,6 +3,7 @@ package com.memes.auth;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,23 +23,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JwtAuthorizationFilterTest {
 
-  @Mock private JwtService jwtService;
-
-  @Mock private HttpServletRequest request;
-  @Mock private SecurityContext securityContext;
-
-  private JwtAuthorizationFilter jwtAuthorizationFilter;
-
   private final String AUTH_HEADER = "Authorization";
+
+  @Mock private JwtService jwtService;
+  @Mock private HttpServletRequest request;
+  @InjectMocks private JwtAuthorizationFilter jwtAuthorizationFilter;
+
+  @Mock private SecurityContext securityContext;
 
   @BeforeEach
   void setUp() {
-    jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtService);
     SecurityContextHolder.setContext(securityContext);
   }
 
   @Test
-  void doFilterInternalValidTokenAndUserPresent() throws ServletException, IOException {
+  void doFilterInternal_ValidTokenAndUserFound_ContextCalledWithMockAuth()
+      throws ServletException, IOException {
     UsernamePasswordAuthenticationToken mockAuth = mock(UsernamePasswordAuthenticationToken.class);
     when(request.getHeader(AUTH_HEADER)).thenReturn("Bearer token");
     when(jwtService.validate("token")).thenReturn(true);
@@ -51,17 +51,18 @@ class JwtAuthorizationFilterTest {
   }
 
   @Test
-  void doFilterInternalMissingToken() throws ServletException, IOException {
+  void doFilterInternal_MissingToken_ContextNotSet() throws ServletException, IOException {
     when(request.getHeader(AUTH_HEADER)).thenReturn("");
 
     jwtAuthorizationFilter.doFilterInternal(
         request, mock(HttpServletResponse.class), mock(FilterChain.class));
 
     verify(jwtService, never()).getAuthentication(any());
+    verify(securityContext, never()).setAuthentication(any());
   }
 
   @Test
-  void doFilterInternalInvalidToken() throws ServletException, IOException {
+  void doFilterInternal_InvalidToken_ContextNotSet() throws ServletException, IOException {
     when(request.getHeader(AUTH_HEADER)).thenReturn("Bea dsadsa");
 
     jwtAuthorizationFilter.doFilterInternal(
@@ -72,7 +73,7 @@ class JwtAuthorizationFilterTest {
   }
 
   @Test
-  void doFilterInternalUserNotFound() throws ServletException, IOException {
+  void doFilterInternal_UserNotFound_ContextNotSet() throws ServletException, IOException {
     when(request.getHeader(AUTH_HEADER)).thenReturn("Bearer token");
     when(jwtService.validate(any())).thenReturn(true);
     when(jwtService.getAuthentication("token")).thenThrow(UsernameNotFoundException.class);

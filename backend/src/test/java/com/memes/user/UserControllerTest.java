@@ -32,7 +32,7 @@ class UserControllerTest {
   }
 
   @Test
-  void getAll() {
+  void getAll_UsersPresent_ReturnsSameSize() {
     List<User> mockUsers = Arrays.asList(user, user);
     when(userService.findAll()).thenReturn(mockUsers);
 
@@ -43,7 +43,7 @@ class UserControllerTest {
   }
 
   @Test
-  void me() {
+  void me_UserPresent_ReturnsUserResponse() {
     AuthUser mockUser = mock(AuthUser.class);
     when(mockUser.getUser()).thenReturn(user);
 

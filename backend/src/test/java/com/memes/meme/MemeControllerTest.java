@@ -7,6 +7,7 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,8 @@ import static org.mockito.Mockito.when;
 class MemeControllerTest {
 
   @Mock private MemeService memeService;
-  private MemeController memeController;
+
+  @InjectMocks private MemeController memeController;
 
   private final EasyRandom random = new EasyRandom();
   private final MultipartFile file = new MockMultipartFile("d", "d".getBytes());
@@ -38,7 +40,7 @@ class MemeControllerTest {
   }
 
   @Test
-  void getById() {
+  void getById_MemeFound_ReturnsMeme() {
     Meme returnedMeme = random.nextObject(Meme.class);
     when(memeService.getOneById(returnedMeme.getId())).thenReturn(returnedMeme);
 
@@ -48,7 +50,7 @@ class MemeControllerTest {
   }
 
   @Test
-  void getAll() {
+  void getAll_MemesPresent_ReturnsSameSize() {
     Page<Meme> returnedMemes =
         new PageImpl<>(random.objects(Meme.class, 4).collect(Collectors.toList()));
     when(memeService.findAll(anyInt())).thenReturn(returnedMemes);
@@ -60,7 +62,7 @@ class MemeControllerTest {
   }
 
   @Test
-  void save() throws IOException {
+  void save_OperationSuccessful_ReturnsSavedMeme() throws IOException {
     Meme savedMeme = random.nextObject(Meme.class);
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
     when(memeService.save(saveMemeDto, null, file)).thenReturn(savedMeme);

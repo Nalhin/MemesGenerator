@@ -6,8 +6,10 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -21,16 +23,10 @@ import static org.mockito.Mockito.when;
 class AuthUserDetailsServiceTest {
 
   @Mock private UserRepository userRepository;
-
-  private AuthUserDetailsService authUserDetailsService;
-
-  @BeforeEach
-  void setUp() {
-    authUserDetailsService = new AuthUserDetailsService(userRepository);
-  }
+  @InjectMocks private AuthUserDetailsService authUserDetailsService;
 
   @Test
-  void loadUserByUsernameUserPresent() {
+  void loadUserByUsername_UserFound_ReturnsUser() {
     User mockUser = new EasyRandom().nextObject(User.class);
     when(userRepository.findOneByUsername(mockUser.getUsername()))
         .thenReturn(Optional.of(mockUser));
@@ -41,13 +37,11 @@ class AuthUserDetailsServiceTest {
   }
 
   @Test
-  void loadUserByUsernameUserNotFound() {
+  void loadUserByUsername_UserNotFound_ThrowsUsernameNotFoundException() {
     when(userRepository.findOneByUsername(anyString())).thenReturn(Optional.empty());
 
     assertThrows(
         UsernameNotFoundException.class,
-        () -> {
-          authUserDetailsService.loadUserByUsername("");
-        });
+        () -> authUserDetailsService.loadUserByUsername(""));
   }
 }

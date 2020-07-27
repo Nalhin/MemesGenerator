@@ -6,9 +6,9 @@ import com.memes.template.Template;
 import com.memes.upload.FileUploadService;
 import com.memes.user.User;
 import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -37,18 +37,13 @@ class MemeServiceTest {
   @Mock private FileUploadService fileUploadService;
   @Mock private EntityManager entityManager;
 
-  private MemeService memeService;
+  @InjectMocks private MemeService memeService;
 
   private final EasyRandom random = new EasyRandom();
   private final MultipartFile file = new MockMultipartFile("d", "d".getBytes());
 
-  @BeforeEach
-  void setUp() {
-    memeService = new MemeService(memeRepository, fileUploadService, entityManager);
-  }
-
   @Test
-  void getOneByIdMemeFound() {
+  void getOneById_IsPresent_ReturnsMeme() {
     Meme foundMeme = random.nextObject(Meme.class);
     when(memeRepository.findById(anyLong())).thenReturn(Optional.of(foundMeme));
 
@@ -58,16 +53,14 @@ class MemeServiceTest {
   }
 
   @Test
-  void getOneByIdMemeNotFound() {
+  void getOneById_NotFound_ThrowsResponseStatusException() {
     when(memeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(
-        ResponseStatusException.class,
-        () -> memeService.getOneById(1L));
+    assertThrows(ResponseStatusException.class, () -> memeService.getOneById(1L));
   }
 
   @Test
-  void findAll() {
+  void findAll_MemesAvailable_ReturnsSameSize() {
     Page<Meme> memePage =
         new PageImpl<>(random.objects(Meme.class, 4).collect(Collectors.toList()));
     when(memeRepository.findAll(any(PageRequest.class))).thenReturn(memePage);
@@ -78,7 +71,7 @@ class MemeServiceTest {
   }
 
   @Test
-  void saveUserPresent() throws IOException {
+  void save_UserPresent_SavesAndReturns() throws IOException {
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
     AuthUser authUser = mock(AuthUser.class);
     User author = random.nextObject(User.class);
@@ -96,7 +89,7 @@ class MemeServiceTest {
   }
 
   @Test
-  void saveUserNotPresent() throws IOException {
+  void save_UserNotPresent_SavedAndReturns() throws IOException {
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
     Template template = random.nextObject(Template.class);
     when(entityManager.getReference(Template.class, saveMemeDto.getTemplateId()))

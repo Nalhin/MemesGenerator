@@ -39,12 +39,13 @@ public class TemplateController {
         templateService
             .findAll(page)
             .map(template -> modelMapper.map(template, TemplateResponseDto.class));
+
     return ResponseEntity.ok(templateResponseDtoPage);
   }
 
   @PostMapping(path = "/templates", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Save template")
-  public ResponseEntity<TemplateResponseDto> addTemplate(
+  public ResponseEntity<TemplateResponseDto> saveTemplate(
       @RequestBody SaveTemplateDto saveTemplateDto) {
     Template savedTemplate =
         templateService.save(modelMapper.map(saveTemplateDto, Template.class));
@@ -54,6 +55,7 @@ public class TemplateController {
             .path("/{id}")
             .buildAndExpand(savedTemplate.getId())
             .toUri();
+
     return ResponseEntity.created(location)
         .body(modelMapper.map(savedTemplate, TemplateResponseDto.class));
   }

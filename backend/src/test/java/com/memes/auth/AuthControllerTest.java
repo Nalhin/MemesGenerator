@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 class AuthControllerTest {
 
   @Mock private AuthService authService;
+
   private AuthController authController;
   private User user;
 
@@ -33,7 +34,7 @@ class AuthControllerTest {
   }
 
   @Test
-  void login() {
+  void login_OperationSuccessful_ReturnsUserAndToken() {
     String token = "token";
     LoginUserDto loginUserDto = new EasyRandom().nextObject(LoginUserDto.class);
     when(authService.login(anyString(), anyString())).thenReturn(Pair.of(user, token));
@@ -45,7 +46,7 @@ class AuthControllerTest {
   }
 
   @Test
-  void signUp() {
+  void signUp_OperationSuccessful_ReturnsUserDto() {
     String token = "token";
     SignUpUserDto signUpUserDto = new EasyRandom().nextObject(SignUpUserDto.class);
     when(authService.signUp(any())).thenReturn(Pair.of(user, token));
@@ -53,6 +54,7 @@ class AuthControllerTest {
     ResponseEntity<AuthResponseDto> result = authController.signUp(signUpUserDto);
 
     assertNotNull(result.getBody());
+    assertEquals(user.getUsername(), result.getBody().getUser().getUsername());
     assertEquals(token, result.getBody().getToken());
   }
 }

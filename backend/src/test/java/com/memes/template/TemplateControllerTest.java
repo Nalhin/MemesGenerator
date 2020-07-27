@@ -37,7 +37,7 @@ class TemplateControllerTest {
   }
 
   @Test
-  void getById() {
+  void getById_IsPresent_ReturnsResponseWithTemplate() {
     Template template = random.nextObject(Template.class);
     when(templateService.getOneById(template.getId())).thenReturn(template);
 
@@ -48,7 +48,7 @@ class TemplateControllerTest {
   }
 
   @Test
-  void getAll() {
+  void getAll_TemplatesPresent_ReturnsResponseWithSameSize() {
     Page<Template> returnedTemplates =
         new PageImpl<>(random.objects(Template.class, 4).collect(Collectors.toList()));
     when(templateService.findAll(anyInt())).thenReturn(returnedTemplates);
@@ -60,14 +60,14 @@ class TemplateControllerTest {
   }
 
   @Test
-  void addTemplate() {
+  void saveTemplate_OperationSuccessful_ReturnsSavedTemplate() {
     MockHttpServletRequest request = new MockHttpServletRequest();
     RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     Template savedTemplate = random.nextObject(Template.class);
     when(templateService.save(any(Template.class))).thenReturn(savedTemplate);
 
     ResponseEntity<TemplateResponseDto> result =
-        templateController.addTemplate(random.nextObject(SaveTemplateDto.class));
+        templateController.saveTemplate(random.nextObject(SaveTemplateDto.class));
 
     assertNotNull(result.getBody());
     assertEquals(savedTemplate.getId(), result.getBody().getId());
