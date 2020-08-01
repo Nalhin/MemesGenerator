@@ -35,7 +35,7 @@ class TemplateServiceTest {
   }
 
   @Test
-  void getOneByIdTemplateFound() {
+  void getOneById_TemplateFound_ReturnTemplate() {
     Template template = random.nextObject(Template.class);
     when(templateRepository.findById(anyLong())).thenReturn(Optional.of(template));
 
@@ -45,17 +45,15 @@ class TemplateServiceTest {
   }
 
   @Test
-  void getOneByIdTemplateNotFound() {
+  void getOneById_TemplateNotFound_ThrowsResponseStatusException() {
     when(templateRepository.findById(anyLong())).thenReturn(Optional.empty());
     assertThrows(
         ResponseStatusException.class,
-        () -> {
-          templateService.getOneById(1L);
-        });
+        () -> templateService.getOneById(1L));
   }
 
   @Test
-  void findAll() {
+  void findAll_TemplatesPresent_ReturnsSameSize() {
     Page<Template> templatePage =
         new PageImpl<>(random.objects(Template.class, 4).collect(Collectors.toList()));
     when(templateRepository.findAll(any(PageRequest.class))).thenReturn(templatePage);
@@ -66,7 +64,7 @@ class TemplateServiceTest {
   }
 
   @Test
-  void save() {
+  void save_OperationSuccessful_ReturnsSavedTemplate() {
     Template template = random.nextObject(Template.class);
     when(templateRepository.save(template)).then(returnsFirstArg());
 

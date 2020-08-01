@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtService jwtService;
@@ -34,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.authorizeRequests()
-        .anyRequest()
-        .authenticated();
+            .anyRequest()
+            .permitAll();
 
     http.addFilterBefore(
         new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
@@ -44,11 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) {
     web.ignoring()
-        .antMatchers("/v2/api-docs")
+        .antMatchers("/v3/api-docs")
         .antMatchers("/swagger-resources/**")
         .antMatchers("/swagger-ui.html")
-        .antMatchers("/configuration/**")
-        .antMatchers("/webjars/**");
+        .antMatchers("/swagger-ui/**");
   }
 
   @Bean

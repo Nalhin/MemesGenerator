@@ -27,7 +27,7 @@ class JwtServiceTest {
   }
 
   @Test
-  void sign() {
+  void sign_ValidUsername_ReturnsValidToken() {
     String username = "username";
 
     String result = jwtService.sign(username);
@@ -36,7 +36,7 @@ class JwtServiceTest {
   }
 
   @Test
-  void getAuthentication() {
+  void getAuthentication_ValidToken_ReturnAuthTokenWithUser() {
     UserDetails userDetails = mock(User.class);
     String username = "username";
     String token = jwtService.sign(username);
@@ -48,7 +48,7 @@ class JwtServiceTest {
   }
 
   @Test
-  void validateValidToken() {
+  void validate_ValidToken_ReturnsTrue() {
     String token = jwtService.sign("username");
 
     boolean result = jwtService.validate(token);
@@ -57,7 +57,7 @@ class JwtServiceTest {
   }
 
   @Test
-  void validateInvalidToken() {
+  void validate_InvalidToken_ReturnsFalse() {
     String token = "invalid";
 
     boolean result = jwtService.validate(token);

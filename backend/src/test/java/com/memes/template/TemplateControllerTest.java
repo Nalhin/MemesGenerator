@@ -1,17 +1,20 @@
 package com.memes.template;
 
+import com.memes.shared.utils.CustomModelMapper;
 import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
-import com.memes.user.User;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.stream.Collectors;
 
@@ -30,38 +33,43 @@ class TemplateControllerTest {
 
   @BeforeEach
   void setUp() {
-    templateController = new TemplateController(templateService, new ModelMapper());
+    templateController = new TemplateController(templateService, new CustomModelMapper());
   }
 
   @Test
-  void getById() {
+  void getById_IsPresent_ReturnsResponseWithTemplate() {
     Template template = random.nextObject(Template.class);
     when(templateService.getOneById(template.getId())).thenReturn(template);
 
-    TemplateResponseDto response = templateController.getById(template.getId());
+    ResponseEntity<TemplateResponseDto> result = templateController.getById(template.getId());
 
-    assertEquals(template.getId(), response.getId());
+    assertNotNull(result.getBody());
+    assertEquals(template.getId(), result.getBody().getId());
   }
 
   @Test
-  void getAll() {
+  void getAll_TemplatesPresent_ReturnsResponseWithSameSize() {
     Page<Template> returnedTemplates =
         new PageImpl<>(random.objects(Template.class, 4).collect(Collectors.toList()));
     when(templateService.findAll(anyInt())).thenReturn(returnedTemplates);
 
-    Page<TemplateResponseDto> result = templateController.getAll(1);
+    ResponseEntity<Page<TemplateResponseDto>> result = templateController.getAll(1);
 
-    assertEquals(4, result.getTotalElements());
+    assertNotNull(result.getBody());
+    assertEquals(4, result.getBody().getSize());
   }
 
   @Test
-  void addTemplate() {
+  void saveTemplate_OperationSuccessful_ReturnsSavedTemplate() {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     Template savedTemplate = random.nextObject(Template.class);
     when(templateService.save(any(Template.class))).thenReturn(savedTemplate);
 
-    TemplateResponseDto response =
-        templateController.addTemplate(random.nextObject(SaveTemplateDto.class));
+    ResponseEntity<TemplateResponseDto> result =
+        templateController.saveTemplate(random.nextObject(SaveTemplateDto.class));
 
-    assertEquals(savedTemplate.getId(), response.getId());
+    assertNotNull(result.getBody());
+    assertEquals(savedTemplate.getId(), result.getBody().getId());
   }
 }

@@ -4,6 +4,7 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,17 +18,18 @@ import static org.mockito.Mockito.when;
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
+
+  @InjectMocks
   private UserService userService;
   private User user;
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository);
     user = new EasyRandom().nextObject(User.class);
   }
 
   @Test
-  void findAll() {
+  void findAll_UsersPresent_ReturnsUsers() {
     List<User> mockUsers = Arrays.asList(user, user);
     when(userRepository.findAll()).thenReturn(mockUsers);
 
@@ -37,7 +39,7 @@ class UserServiceTest {
   }
 
   @Test
-  void findOneByUsername() {
+  void findOneByUsername_UserFound_ReturnsUser() {
     when(userRepository.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
     Optional<User> result = userService.findOneByUsername(user.getUsername());
@@ -46,7 +48,7 @@ class UserServiceTest {
   }
 
   @Test
-  void save() {
+  void save_OperationSuccessful_SaveCalled() {
     userService.save(user);
 
     verify(userRepository).save(user);
