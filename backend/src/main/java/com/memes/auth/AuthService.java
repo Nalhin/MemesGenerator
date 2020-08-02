@@ -1,5 +1,6 @@
 package com.memes.auth;
 
+import com.memes.auth.models.AuthenticatedUser;
 import com.memes.user.User;
 import com.memes.user.UserService;
 import org.springframework.data.util.Pair;
@@ -32,7 +33,7 @@ public class AuthService {
     Authentication auth =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(username, password));
-    User user = ((AuthUser) auth.getPrincipal()).getUser();
+    User user = ((AuthenticatedUser) auth.getPrincipal()).getPresentUser();
     return Pair.of(user, jwtService.sign(user.getUsername()));
   }
 
