@@ -1,7 +1,7 @@
 package com.memes.config;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.memes.auth.AuthUser;
+import com.memes.auth.models.AuthenticatedUser;
 import com.memes.shared.dto.UnauthorizedExceptionDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class SwaggerConfig {
   @Bean
   public Docket api(TypeResolver typeResolver) {
     return new Docket(DocumentationType.OAS_30)
-        .ignoredParameterTypes(Principal.class, AuthUser.class)
+        .ignoredParameterTypes(Principal.class, AuthenticatedUser.class)
         .select()
         .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         .paths(PathSelectors.any())

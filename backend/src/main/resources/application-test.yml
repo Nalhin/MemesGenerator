@@ -1,3 +1,6 @@
+image-upload-url: ""
+image-access-url: ""
+
 spring:
   datasource:
     driver-class-name: org.h2.Driver

@@ -1,5 +1,6 @@
 package com.memes.auth;
 
+import com.memes.auth.models.AuthenticatedUser;
 import com.memes.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,7 +24,7 @@ public class AuthUserDetailsService implements UserDetailsService {
         .findOneByUsername(username)
         .map(
             (user) ->
-                AuthUser.authUserBuilder()
+                AuthenticatedUser.AuthUserBuilder()
                     .username(user.getUsername())
                     .user(user)
                     .password(user.getPassword())

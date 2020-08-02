@@ -2,6 +2,7 @@ package com.memes.config;
 
 import com.memes.auth.JwtAuthorizationFilter;
 import com.memes.auth.JwtService;
+import com.memes.auth.models.AnonymousUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,9 +12,13 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -34,12 +39,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    http.authorizeRequests()
-            .anyRequest()
-            .permitAll();
-
+    http.authorizeRequests().anyRequest().permitAll();
     http.addFilterBefore(
         new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+
+    http.anonymous()
+        .authenticationFilter(
+            new AnonymousAuthenticationFilter(
+                UUID.randomUUID().toString(),
+                new AnonymousUser(),
+                AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")));
   }
 
   @Override

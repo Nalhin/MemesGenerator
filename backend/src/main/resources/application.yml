@@ -3,6 +3,9 @@ server:
   servlet:
     context-path: "/api/v1"
 
+image-upload-url: "http://localhost:8080/upload"
+image-access-url: "http://localhost:8080/images/"
+
 spring:
   profiles:
     active: dev

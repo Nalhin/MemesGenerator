@@ -1,7 +1,8 @@
 package com.memes.user;
 
-import com.memes.auth.AuthUser;
+import com.memes.auth.models.AuthenticatedUser;
 import com.memes.shared.annotations.Authenticated;
+import com.memes.shared.annotations.CurrentUser;
 import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.dto.UserResponseDto;
 import io.swagger.annotations.Api;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +35,7 @@ public class UserController {
   @GetMapping(path = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiResponses(@ApiResponse(responseCode = "200", description = "Get currently logged user"))
   @Authenticated
-  public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal AuthUser authUser) {
-    return ResponseEntity.ok(modelMapper.map(authUser.getUser(), UserResponseDto.class));
+  public ResponseEntity<UserResponseDto> me(@CurrentUser AuthenticatedUser authUser) {
+    return ResponseEntity.ok(modelMapper.map(authUser.getPresentUser(), UserResponseDto.class));
   }
 }

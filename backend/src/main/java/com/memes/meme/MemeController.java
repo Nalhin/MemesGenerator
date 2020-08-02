@@ -1,21 +1,19 @@
 package com.memes.meme;
 
-import com.memes.auth.AuthUser;
+import com.memes.auth.models.AuthUser;
 import com.memes.meme.dto.MemeResponseDto;
 import com.memes.meme.dto.SaveMemeDto;
+import com.memes.shared.annotations.CurrentUser;
 import com.memes.shared.utils.CustomModelMapper;
-import com.sun.istack.Nullable;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.net.URI;
 
 @RestController
@@ -50,8 +48,7 @@ public class MemeController {
   public ResponseEntity<MemeResponseDto> save(
       @RequestPart SaveMemeDto saveMemeDto,
       @RequestPart MultipartFile file,
-      @AuthenticationPrincipal @Nullable AuthUser authUser)
-      throws IOException {
+      @CurrentUser AuthUser authUser) {
 
     Meme savedMeme = memeService.save(saveMemeDto, authUser, file);
 

@@ -1,19 +1,19 @@
-package com.memes.auth;
+package com.memes.auth.models;
 
 import com.memes.user.User;
 import lombok.Builder;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Optional;
 
-@Getter
-public class AuthUser extends org.springframework.security.core.userdetails.User {
+public class AuthenticatedUser extends org.springframework.security.core.userdetails.User
+    implements AuthUser {
 
   private final User user;
 
-  @Builder(builderMethodName = "authUserBuilder")
-  public AuthUser(
+  @Builder(builderMethodName = "AuthUserBuilder")
+  public AuthenticatedUser(
       String username,
       String password,
       boolean enabled,
@@ -31,5 +31,24 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
         accountNonLocked,
         authorities);
     this.user = user;
+  }
+
+  @Override
+  public boolean isAuthenticated() {
+    return true;
+  }
+
+  public User getPresentUser() {
+    return this.user;
+  }
+
+  @Override
+  public Optional<User> getUser() {
+    return Optional.of(this.user);
+  }
+
+  @Override
+  public Optional<AuthenticatedUser> getAuthenticatedUser() {
+    return Optional.of(this);
   }
 }
