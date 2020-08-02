@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: memes_db
+    image: postgres:12.3
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    env_file:
+      - ../.env
+  nginx:
+    container_name: memes_nginx
+    image: nginx:1.19
+    volumes:
+      - ../images:/var/www/data/images
+      - ./nginx:/etc/nginx/conf.d/
+    ports:
+      - "8080:80"
+    depends_on:
+      - file_upload
+
+  file_upload:
+    container_name: file_upload
+    volumes:
+      - ../images:/images
+    build: ./file-upload
+
+volumes:
+  db:
