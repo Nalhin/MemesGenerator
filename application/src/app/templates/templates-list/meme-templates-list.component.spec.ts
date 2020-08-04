@@ -9,7 +9,7 @@ import {
 import { MemeTemplatesListComponent } from './meme-templates-list.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MemeTemplatesService } from '../meme-templates.service';
+import { TemplatesService } from '../templates.service';
 import { of } from 'rxjs';
 import { pageTemplateResponseDtoFactory } from '../../../../test/fixtures/meme-template.fixture';
 import { By } from '@angular/platform-browser';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 describe('MemeTemplatesListComponent', () => {
   let component: MemeTemplatesListComponent;
   let fixture: ComponentFixture<MemeTemplatesListComponent>;
-  let memeTemplatesService: MemeTemplatesService;
+  let memeTemplatesService: TemplatesService;
   let router: Router;
 
   beforeEach(async(() => {
@@ -31,7 +31,7 @@ describe('MemeTemplatesListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MemeTemplatesListComponent);
     component = fixture.componentInstance;
-    memeTemplatesService = TestBed.inject(MemeTemplatesService);
+    memeTemplatesService = TestBed.inject(TemplatesService);
     router = TestBed.inject(Router);
     fixture.detectChanges();
   });

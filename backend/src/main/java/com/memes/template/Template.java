@@ -16,5 +16,6 @@ public class Template {
   private Long id;
 
   private String title;
+
   private String url;
 }

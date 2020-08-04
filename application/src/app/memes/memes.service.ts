@@ -13,13 +13,13 @@ export class MemesService {
   constructor(private readonly httpClient: HttpClient) {}
 
   getAll(page: number) {
-    return this.httpClient.get<PageMemeResponseDto>('/api/memes', {
+    return this.httpClient.get<PageMemeResponseDto>('/memes', {
       params: new HttpParams().set('page', String(page)),
     });
   }
 
   getOneById(id: number) {
-    return this.httpClient.get<MemeResponseDto>(`/api/memes/${id}`);
+    return this.httpClient.get<MemeResponseDto>(`/memes/${id}`);
   }
 
   save(blob: Blob, saveMemeDto: SaveMemeDto) {
@@ -32,6 +32,6 @@ export class MemesService {
       }),
     );
 
-    return this.httpClient.post<SaveMemeDto>('/api/memes/save', formData);
+    return this.httpClient.post<SaveMemeDto>('/memes/save', formData);
   }
 }

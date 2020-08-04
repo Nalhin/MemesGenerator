@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MemeTemplatesService } from './meme-templates.service';
+import { TemplatesService } from './templates.service';
 import {
   HttpClientTestingModule,
   HttpTestingController,
@@ -13,13 +13,13 @@ import {
 import { memeResponseDtoFactory } from '../../../test/fixtures/meme.fixture';
 
 describe('TemplatesService', () => {
-  let service: MemeTemplatesService;
+  let service: TemplatesService;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
     httpTestingController = TestBed.inject(HttpTestingController);
-    service = TestBed.inject(MemeTemplatesService);
+    service = TestBed.inject(TemplatesService);
   });
 
   afterEach(() => {
@@ -41,9 +41,7 @@ describe('TemplatesService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne(
-        `/api/templates?page=${page}`,
-      );
+      const req = httpTestingController.expectOne(`/templates?page=${page}`);
       req.flush(response);
     });
   });
@@ -57,9 +55,7 @@ describe('TemplatesService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne(
-        `/api/templates/${response.id}`,
-      );
+      const req = httpTestingController.expectOne(`/templates/${response.id}`);
       req.flush(response);
     });
   });
@@ -74,7 +70,7 @@ describe('TemplatesService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne('/api/templates/save');
+      const req = httpTestingController.expectOne('/templates/save');
       req.flush(response);
     });
   });

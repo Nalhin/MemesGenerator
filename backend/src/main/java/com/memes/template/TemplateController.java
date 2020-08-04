@@ -5,7 +5,7 @@ import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.net.URI;
 
 @RestController
 @Api(tags = "templates")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TemplateController {
 
   private final TemplateService templateService;

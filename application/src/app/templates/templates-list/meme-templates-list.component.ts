@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MemeTemplatesService } from '../meme-templates.service';
+import { TemplatesService } from '../templates.service';
 import { PageTemplateResponseDto } from '../../shared/interfaces/api.interface';
 
 @Component({
@@ -11,7 +11,7 @@ export class MemeTemplatesListComponent implements OnInit {
   memeTemplates$: Observable<PageTemplateResponseDto>;
   currentPage = 0;
 
-  constructor(private readonly memeTemplatesService: MemeTemplatesService) {}
+  constructor(private readonly memeTemplatesService: TemplatesService) {}
 
   ngOnInit(): void {
     this.memeTemplates$ = this.memeTemplatesService.getAll(this.currentPage);

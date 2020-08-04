@@ -10,14 +10,14 @@ import { MemeTemplateDetailsComponent } from './meme-template-details.component'
 import { MemeEditorModule } from '../meme-editor/meme-editor.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MemeTemplatesService } from '../meme-templates.service';
+import { TemplatesService } from '../templates.service';
 import { of } from 'rxjs';
 import { templateResponseDtoFactory } from '../../../../test/fixtures/meme-template.fixture';
 
 describe('MemeTemplateDetailsComponent', () => {
   let component: MemeTemplateDetailsComponent;
   let fixture: ComponentFixture<MemeTemplateDetailsComponent>;
-  let memeTemplatesService: MemeTemplatesService;
+  let memeTemplatesService: TemplatesService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -29,7 +29,7 @@ describe('MemeTemplateDetailsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MemeTemplateDetailsComponent);
     component = fixture.componentInstance;
-    memeTemplatesService = TestBed.inject(MemeTemplatesService);
+    memeTemplatesService = TestBed.inject(TemplatesService);
     fixture.detectChanges();
   });
 

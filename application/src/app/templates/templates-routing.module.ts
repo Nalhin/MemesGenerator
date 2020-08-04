@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MemeTemplatesListComponent } from './meme-templates-list/meme-templates-list.component';
-import { MemeTemplateDetailsComponent } from './meme-template-details/meme-template-details.component';
+import { MemeTemplatesListComponent } from './templates-list/meme-templates-list.component';
+import { MemeTemplateDetailsComponent } from './template-details/meme-template-details.component';
 
 const routes: Routes = [
   {
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class MemeTemplatesRoutingModule {}
+export class TemplatesRoutingModule {}
