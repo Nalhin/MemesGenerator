@@ -36,7 +36,7 @@ describe('MemesServiceService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne(`/api/memes?page=${page}`);
+      const req = httpTestingController.expectOne(`/memes?page=${page}`);
       req.flush(response);
     });
   });
@@ -50,7 +50,7 @@ describe('MemesServiceService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne(`/api/memes/${response.id}`);
+      const req = httpTestingController.expectOne(`/memes/${response.id}`);
       req.flush(response);
     });
   });
@@ -65,7 +65,7 @@ describe('MemesServiceService', () => {
         done();
       });
 
-      const req = httpTestingController.expectOne('/api/memes/save');
+      const req = httpTestingController.expectOne('/memes/save');
       req.flush(response);
     });
   });

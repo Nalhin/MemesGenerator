@@ -9,9 +9,7 @@ const routes: Routes = [
   {
     path: 'templates',
     loadChildren: () =>
-      import('./meme-templates/meme-templates.module').then(
-        (m) => m.MemeTemplatesModule,
-      ),
+      import('./templates/templates.module').then((m) => m.TemplatesModule),
   },
   {
     path: 'memes',

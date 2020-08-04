@@ -4,6 +4,7 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -25,14 +26,9 @@ import static org.mockito.Mockito.when;
 class TemplateServiceTest {
 
   @Mock private TemplateRepository templateRepository;
-  private TemplateService templateService;
+  @InjectMocks private TemplateService templateService;
 
   private final EasyRandom random = new EasyRandom();
-
-  @BeforeEach
-  void setup() {
-    templateService = new TemplateService(templateRepository);
-  }
 
   @Test
   void getOneById_TemplateFound_ReturnTemplate() {
@@ -47,9 +43,7 @@ class TemplateServiceTest {
   @Test
   void getOneById_TemplateNotFound_ThrowsResponseStatusException() {
     when(templateRepository.findById(anyLong())).thenReturn(Optional.empty());
-    assertThrows(
-        ResponseStatusException.class,
-        () -> templateService.getOneById(1L));
+    assertThrows(ResponseStatusException.class, () -> templateService.getOneById(1L));
   }
 
   @Test

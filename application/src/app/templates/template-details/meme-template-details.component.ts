@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MemeTemplatesService } from '../meme-templates.service';
+import { TemplatesService } from '../templates.service';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -13,7 +13,7 @@ export class MemeTemplateDetailsComponent implements OnInit {
   memeTemplateDetails$: Observable<TemplateResponseDto>;
 
   constructor(
-    private readonly memeTemplatesService: MemeTemplatesService,
+    private readonly memeTemplatesService: TemplatesService,
     private readonly activatedRoute: ActivatedRoute,
   ) {}
 

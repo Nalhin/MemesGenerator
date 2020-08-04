@@ -10,22 +10,22 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class MemeTemplatesService {
+export class TemplatesService {
   constructor(private readonly httpClient: HttpClient) {}
 
   getAll(page: number) {
-    return this.httpClient.get<PageTemplateResponseDto>('/api/templates', {
+    return this.httpClient.get<PageTemplateResponseDto>('/templates', {
       params: new HttpParams().set('page', String(page)),
     });
   }
 
   getOneById(id: number) {
-    return this.httpClient.get<TemplateResponseDto>(`/api/templates/${id}`);
+    return this.httpClient.get<TemplateResponseDto>(`/templates/${id}`);
   }
 
   save(saveTemplateDto: SaveTemplateDto) {
     return this.httpClient.post<MemeResponseDto>(
-      '/api/templates/save',
+      '/templates/save',
       saveTemplateDto,
     );
   }
