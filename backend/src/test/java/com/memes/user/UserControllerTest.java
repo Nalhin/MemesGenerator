@@ -1,7 +1,6 @@
 package com.memes.user;
 
 import com.memes.auth.models.AuthenticatedUser;
-import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.dto.UserResponseDto;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -28,7 +26,7 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    userController = new UserController(userService, new CustomModelMapper());
+    userController = new UserController(userService, new UserMapperImpl());
     user = new EasyRandom().nextObject(User.class);
   }
 

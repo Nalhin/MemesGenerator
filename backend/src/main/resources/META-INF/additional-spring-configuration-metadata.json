@@ -1,14 +1,14 @@
 {
   "properties": [
     {
-      "name": "image-upload-url",
+      "name": "images.upload-url",
       "type": "java.lang.String",
       "description": "URL where images are uploaded."
     },
     {
-      "name": "image-access-url",
+      "name": "images.url-prefix",
       "type": "java.lang.String",
-      "description": "Base url for image access."
+      "description": "Base url used for image access."
     }
   ]
 }

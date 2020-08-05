@@ -1,8 +1,10 @@
 package com.memes.meme;
 
+import com.memes.auth.models.AnonymousUser;
+import com.memes.auth.models.AuthUser;
 import com.memes.meme.dto.MemeResponseDto;
 import com.memes.meme.dto.SaveMemeDto;
-import com.memes.shared.utils.CustomModelMapper;
+import com.memes.user.UserMapperImpl;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ class MemeControllerTest {
 
   @BeforeEach
   void setUp() {
-    memeController = new MemeController(memeService, new CustomModelMapper());
+    memeController = new MemeController(memeService, new MemeMapperImpl(new UserMapperImpl()));
   }
 
   @Test
@@ -62,12 +63,13 @@ class MemeControllerTest {
   }
 
   @Test
-  void save_OperationSuccessful_ReturnsSavedMeme() throws IOException {
+  void save_OperationSuccessful_ReturnsSavedMeme() {
     Meme savedMeme = random.nextObject(Meme.class);
     SaveMemeDto saveMemeDto = random.nextObject(SaveMemeDto.class);
-    when(memeService.save(saveMemeDto, null, file)).thenReturn(savedMeme);
+    AnonymousUser anonymousUser = new AnonymousUser();
+    when(memeService.save(saveMemeDto, file, anonymousUser)).thenReturn(savedMeme);
 
-    ResponseEntity<MemeResponseDto> result = memeController.save(saveMemeDto, file, null);
+    ResponseEntity<MemeResponseDto> result = memeController.save(saveMemeDto, file, anonymousUser);
 
     assertNotNull(result.getBody());
     assertEquals(savedMeme.getId(), result.getBody().getId());

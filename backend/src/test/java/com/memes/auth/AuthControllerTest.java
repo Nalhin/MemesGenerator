@@ -3,8 +3,8 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
-import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.User;
+import com.memes.user.UserMapperImpl;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class AuthControllerTest {
 
   @BeforeEach
   void setUp() {
-    authController = new AuthController(authService, new CustomModelMapper());
+    authController = new AuthController(authService, new AuthMapperImpl(new UserMapperImpl()));
     user = new EasyRandom().nextObject(User.class);
   }
 
@@ -54,7 +54,8 @@ class AuthControllerTest {
     ResponseEntity<AuthResponseDto> result = authController.signUp(signUpUserDto);
 
     assertNotNull(result.getBody());
-    assertEquals(user.getUsername(), result.getBody().getUser().getUsername());
-    assertEquals(token, result.getBody().getToken());
+    assertAll(
+        () -> assertEquals(user.getUsername(), result.getBody().getUser().getUsername()),
+        () -> assertEquals(token, result.getBody().getToken()));
   }
 }

@@ -3,7 +3,6 @@ package com.memes.user;
 import com.memes.auth.models.AuthenticatedUser;
 import com.memes.shared.annotations.Authenticated;
 import com.memes.shared.annotations.CurrentUser;
-import com.memes.shared.utils.CustomModelMapper;
 import com.memes.user.dto.UserResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,19 +22,18 @@ import java.util.List;
 public class UserController {
 
   private final UserService userService;
-  private final CustomModelMapper modelMapper;
+  private final UserMapper userMapper;
 
   @GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Get users")
   public ResponseEntity<List<UserResponseDto>> getAll() {
-    return ResponseEntity.ok(
-        modelMapper.mapList(this.userService.findAll(), UserResponseDto.class));
+    return ResponseEntity.ok(userMapper.usersToUserResponseDtoList(this.userService.findAll()));
   }
 
   @GetMapping(path = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiResponses(@ApiResponse(responseCode = "200", description = "Get currently logged user"))
   @Authenticated
   public ResponseEntity<UserResponseDto> me(@CurrentUser AuthenticatedUser authUser) {
-    return ResponseEntity.ok(modelMapper.map(authUser.getPresentUser(), UserResponseDto.class));
+    return ResponseEntity.ok(userMapper.userToUserResponseDto(authUser.getPresentUser()));
   }
 }

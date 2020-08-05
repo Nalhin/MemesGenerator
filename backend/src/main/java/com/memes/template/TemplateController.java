@@ -1,6 +1,5 @@
 package com.memes.template;
 
-import com.memes.shared.utils.CustomModelMapper;
 import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
 import io.swagger.annotations.Api;
@@ -20,13 +19,13 @@ import java.net.URI;
 public class TemplateController {
 
   private final TemplateService templateService;
-  private final CustomModelMapper modelMapper;
+  private final TemplateMapper templateMapper;
 
   @GetMapping(path = "/templates/{templateId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Get template by id")
   public ResponseEntity<TemplateResponseDto> getById(@PathVariable Long templateId) {
     TemplateResponseDto templateResponseDto =
-        modelMapper.map(templateService.getOneById(templateId), TemplateResponseDto.class);
+        templateMapper.templateToTemplateResponseDto(templateService.getOneById(templateId));
 
     return ResponseEntity.ok(templateResponseDto);
   }
@@ -36,9 +35,7 @@ public class TemplateController {
   public ResponseEntity<Page<TemplateResponseDto>> getAll(
       @RequestParam(name = "page", defaultValue = "0") int page) {
     Page<TemplateResponseDto> templateResponseDtoPage =
-        templateService
-            .findAll(page)
-            .map(template -> modelMapper.map(template, TemplateResponseDto.class));
+        templateService.findAll(page).map(templateMapper::templateToTemplateResponseDto);
 
     return ResponseEntity.ok(templateResponseDtoPage);
   }
@@ -48,7 +45,7 @@ public class TemplateController {
   public ResponseEntity<TemplateResponseDto> saveTemplate(
       @RequestBody SaveTemplateDto saveTemplateDto) {
     Template savedTemplate =
-        templateService.save(modelMapper.map(saveTemplateDto, Template.class));
+        templateService.save(templateMapper.saveTemplateDtoToTemplate(saveTemplateDto));
 
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
@@ -57,6 +54,6 @@ public class TemplateController {
             .toUri();
 
     return ResponseEntity.created(location)
-        .body(modelMapper.map(savedTemplate, TemplateResponseDto.class));
+        .body(templateMapper.templateToTemplateResponseDto(savedTemplate));
   }
 }

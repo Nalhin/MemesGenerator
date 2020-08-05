@@ -35,13 +35,13 @@ public class MemeService {
   }
 
   @Transactional
-  public Meme save(SaveMemeDto saveMemeDto, AuthUser authUser, MultipartFile file) {
+  public Meme save(SaveMemeDto saveMemeDto, MultipartFile file, AuthUser authUser) {
     Meme meme = new Meme();
     authUser.getUser().ifPresent(meme::setAuthor);
     meme.setTemplate(templateRepository.getOne(saveMemeDto.getTemplateId()));
     try {
       String uploadUrl = fileUploadService.uploadFile(file, UUID.randomUUID().toString() + ".jpg");
-      meme.setUrl(uploadUrl);
+      meme.setFilename(uploadUrl);
     } catch (ImageNotSavedException exception) {
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Image could not be saved.");

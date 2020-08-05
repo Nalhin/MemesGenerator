@@ -1,6 +1,5 @@
 package com.memes.template;
 
-import com.memes.shared.utils.CustomModelMapper;
 import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
 import org.jeasy.random.EasyRandom;
@@ -33,7 +32,7 @@ class TemplateControllerTest {
 
   @BeforeEach
   void setUp() {
-    templateController = new TemplateController(templateService, new CustomModelMapper());
+    templateController = new TemplateController(templateService, new TemplateMapperImpl());
   }
 
   @Test

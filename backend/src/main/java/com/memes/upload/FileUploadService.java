@@ -15,11 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileUploadService {
 
-  @Value("${image-upload-url}")
+  @Value("${images.upload-url}")
   private String fileUploadUrl;
-
-  @Value("${image-access-url}")
-  private String imageUrl;
 
   private final RestTemplate restTemplate;
 
@@ -50,6 +47,6 @@ public class FileUploadService {
       throw new ImageNotSavedException();
     }
 
-    return imageUrl + fileName;
+    return fileName;
   }
 }

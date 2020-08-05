@@ -19,7 +19,7 @@ public class Meme {
 
   @ManyToOne @JoinColumn private Template template;
 
-  private String url;
+  private String filename;
 
   @CreationTimestamp private Date created;
 }

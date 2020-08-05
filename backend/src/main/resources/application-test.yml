@@ -1,5 +1,7 @@
-image-upload-url: ""
-image-access-url: ""
+images:
+  upload-url: ""
+  url-prefix: ""
+
 
 spring:
   datasource:

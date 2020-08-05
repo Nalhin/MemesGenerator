@@ -23,11 +23,9 @@ class CommentServiceTest {
   @Mock private CommentRepository commentRepository;
   @InjectMocks private CommentService commentService;
 
-  private final EasyRandom random = new EasyRandom();
-
   @Test
   void getOneById_CommentFound_ReturnsComment() {
-    Comment comment = random.nextObject(Comment.class);
+    Comment comment = new EasyRandom().nextObject(Comment.class);
     when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
 
     Comment result = commentService.getOneById(comment.getId());
@@ -44,7 +42,7 @@ class CommentServiceTest {
 
   @Test
   void saveComment_OperationSuccessful_ReturnsComment() {
-    Comment comment = random.nextObject(Comment.class);
+    Comment comment = new EasyRandom().nextObject(Comment.class);
     when(commentRepository.save(any(Comment.class))).then(returnsFirstArg());
 
     Comment result = commentService.saveComment(comment);

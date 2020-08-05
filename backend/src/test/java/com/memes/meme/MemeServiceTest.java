@@ -80,7 +80,7 @@ class MemeServiceTest {
     when(templateRepository.getOne(saveMemeDto.getTemplateId())).thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
 
-    Meme result = memeService.save(saveMemeDto, authUser, file);
+    Meme result = memeService.save(saveMemeDto, file, authUser);
 
     assertEquals(author, result.getAuthor());
     assertEquals(template, result.getTemplate());
@@ -93,7 +93,7 @@ class MemeServiceTest {
     when(templateRepository.getOne(saveMemeDto.getTemplateId())).thenReturn(template);
     when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
 
-    Meme result = memeService.save(saveMemeDto, new AnonymousUser(), file);
+    Meme result = memeService.save(saveMemeDto, file, new AnonymousUser());
 
     assertEquals(template, result.getTemplate());
     assertNull(result.getAuthor());
@@ -106,6 +106,6 @@ class MemeServiceTest {
 
     assertThrows(
         ResponseStatusException.class,
-        () -> memeService.save(random.nextObject(SaveMemeDto.class), new AnonymousUser(), file));
+        () -> memeService.save(random.nextObject(SaveMemeDto.class), file, new AnonymousUser()));
   }
 }
