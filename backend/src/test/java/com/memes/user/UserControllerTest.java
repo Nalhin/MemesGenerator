@@ -1,54 +1,65 @@
 package com.memes.user;
 
-import com.memes.auth.models.AuthenticatedUser;
+import com.memes.testutils.auth.WithMockAnonymousUser;
+import com.memes.testutils.auth.WithMockAuthenticatedUser;
 import com.memes.user.dto.UserResponseDto;
 import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
+import static com.memes.testutils.matchers.RequestMatchers.assertThatRequest;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
+  @Autowired private MockMvc mockMvc;
 
-  @Mock private UserService userService;
-  private UserController userController;
-  private User user;
+  @Autowired private UserMapper userMapper;
 
-  @BeforeEach
-  void setUp() {
-    userController = new UserController(userService, new UserMapperImpl());
-    user = new EasyRandom().nextObject(User.class);
-  }
+  @MockBean private UserService userService;
 
   @Test
-  void getAll_UsersPresent_ReturnsSameSize() {
-    List<User> mockUsers = Arrays.asList(user, user);
+  void getAll_UsersPresent_Returns200AndUsers() throws Exception {
+    List<User> mockUsers = new EasyRandom().objects(User.class, 2).collect(Collectors.toList());
+    List<UserResponseDto> expected = userMapper.usersToUserResponseDtoList(mockUsers);
     when(userService.findAll()).thenReturn(mockUsers);
 
-    ResponseEntity<List<UserResponseDto>> result = userController.getAll();
+    mockMvc
+        .perform(get("/users").contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(responseBody().containsObjectAsJson(expected, UserResponseDto[].class));
 
-    assertNotNull(result.getBody());
-    assertEquals(mockUsers.size(), result.getBody().size());
+    verify(userService, times(1)).findAll();
   }
 
   @Test
-  void me_UserPresent_ReturnsUserResponse() {
-    AuthenticatedUser mockUser = mock(AuthenticatedUser.class);
-    when(mockUser.getPresentUser()).thenReturn(user);
+  @WithMockAuthenticatedUser()
+  void me_AuthenticatedUser_Returns200AndUserResponse() throws Exception {
+    mockMvc
+        .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
 
-    ResponseEntity<UserResponseDto> result = userController.me(mockUser);
-
-    assertNotNull(result.getBody());
-    assertEquals(user.getUsername(), result.getBody().getUsername());
+  @Test
+  @WithMockAnonymousUser()
+  void me_whenUnauthenticatedUser_ThrowsUnauthorizedException() {
+    assertThatRequest(
+            () -> mockMvc.perform(get("/users/me")))
+        .throwsUnauthorizedException();
   }
 }

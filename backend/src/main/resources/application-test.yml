@@ -2,7 +2,6 @@ images:
   upload-url: ""
   url-prefix: ""
 
-
 spring:
   datasource:
     driver-class-name: org.h2.Driver

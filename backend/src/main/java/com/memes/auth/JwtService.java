@@ -26,7 +26,7 @@ public class JwtService {
   }
 
   @PostConstruct
-  protected void init() {
+  public void init() {
     JWT_KEY = Base64.getEncoder().encodeToString(JWT_KEY.getBytes());
   }
 

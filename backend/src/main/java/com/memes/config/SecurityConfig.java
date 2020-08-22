@@ -3,6 +3,7 @@ package com.memes.config;
 import com.memes.auth.JwtAuthorizationFilter;
 import com.memes.auth.JwtService;
 import com.memes.auth.models.AnonymousUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +21,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtService jwtService;
-
-  public SecurityConfig(JwtService jwtService) {
-    this.jwtService = jwtService;
-  }
 
   @Override
   protected void configure(final HttpSecurity http) throws Exception {

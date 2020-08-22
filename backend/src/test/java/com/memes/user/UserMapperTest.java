@@ -1,38 +1,39 @@
 package com.memes.user;
 
 import com.memes.user.dto.UserResponseDto;
-import org.jeasy.random.EasyRandom;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserMapperTest {
 
   private final UserMapper userMapper = new UserMapperImpl();
 
   @Test
-  void userToUserResponseDto_FilledUser_ReturnsStrippedDto() {
-    User user = new EasyRandom().nextObject(User.class);
+  void userToUserResponseDto_whenFilledUser_ReturnsStrippedDto() {
+    User user = UserTestBuilder.user().build();
 
     UserResponseDto result = userMapper.userToUserResponseDto(user);
 
-    assertAll(
-        () -> assertEquals(user.getUsername(), result.getUsername()),
-        () -> assertEquals(user.getEmail(), result.getEmail()));
+    SoftAssertions.assertSoftly(
+        softly -> {
+          softly.assertThat(result.getUsername()).isEqualTo(user.getUsername());
+          softly.assertThat(result.getEmail()).isEqualTo(user.getEmail());
+        });
   }
 
   @Test
-  void usersToUserResponseDtoList_FilledUserList_ReturnsUserResponseDtoList() {
-    List<User> users = new EasyRandom().objects(User.class, 4).collect(Collectors.toList());
+  void usersToUserResponseDtoList_whenFilledUserList_ReturnsUserResponseDtoList() {
+    List<User> users = UserTestBuilder.users(4);
 
     List<UserResponseDto> result = userMapper.usersToUserResponseDtoList(users);
 
-    assertAll(
-        () -> assertEquals(users.size(), result.size()),
-        () -> assertEquals(users.get(1).getUsername(), result.get(1).getUsername()),
-        () -> assertEquals(users.get(2).getEmail(), result.get(2).getEmail()));
+    SoftAssertions.assertSoftly(
+        softly -> {
+          softly.assertThat(result).hasSize(4);
+          softly.assertThat(result.get(1).getEmail()).isEqualTo(users.get(1).getEmail());
+          softly.assertThat(result.get(2).getUsername()).isEqualTo(users.get(2).getUsername());
+        });
   }
 }
