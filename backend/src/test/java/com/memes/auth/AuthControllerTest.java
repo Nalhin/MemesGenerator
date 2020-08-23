@@ -4,58 +4,97 @@ import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
 import com.memes.user.User;
-import com.memes.user.UserMapperImpl;
-import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.util.Pair;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
+import static com.memes.testutils.utils.RequestUtils.asJSON;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
-  @Mock private AuthService authService;
+  @Autowired private MockMvc mockMvc;
 
-  private AuthController authController;
-  private User user;
+  @MockBean private AuthService authService;
 
-  @BeforeEach
-  void setUp() {
-    authController = new AuthController(authService, new AuthMapperImpl(new UserMapperImpl()));
-    user = new EasyRandom().nextObject(User.class);
+  @Autowired private AuthMapper authMapper;
+
+  @Test
+  void login_ValidInput_Returns200AndUserWithToken() throws Exception {
+    LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
+    Pair<User, String> serviceReturn = AuthTestBuilder.authPair();
+    AuthResponseDto expected = authMapper.authPairToUserResponseDto(serviceReturn);
+    when(authService.login(loginUserDto.getUsername(), loginUserDto.getPassword()))
+        .thenReturn(serviceReturn);
+
+    mockMvc
+        .perform(
+            post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(loginUserDto)))
+        .andExpect(status().isOk())
+        .andExpect(responseBody().containsObjectAsJson(expected, AuthResponseDto.class));
   }
 
   @Test
-  void login_OperationSuccessful_ReturnsUserAndToken() {
-    String token = "token";
-    LoginUserDto loginUserDto = new EasyRandom().nextObject(LoginUserDto.class);
-    when(authService.login(anyString(), anyString())).thenReturn(Pair.of(user, token));
+  void login_NullFields_ReturnsValidationErrors() throws Exception {
+    LoginUserDto loginUserDto =
+        AuthTestBuilder.loginUserDto().password(null).username(null).build();
 
-    ResponseEntity<AuthResponseDto> result = authController.login(loginUserDto);
-
-    assertNotNull(result.getBody());
-    assertEquals(token, result.getBody().getToken());
+    mockMvc
+        .perform(
+            post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(loginUserDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(responseBody().containsValidationErrors("password", "username"));
   }
 
   @Test
-  void signUp_OperationSuccessful_ReturnsUserDto() {
-    String token = "token";
-    SignUpUserDto signUpUserDto = new EasyRandom().nextObject(SignUpUserDto.class);
-    when(authService.signUp(any())).thenReturn(Pair.of(user, token));
+  void signUp_InvalidInput_Returns400AndValidationErrors() throws Exception {
+    SignUpUserDto signUpUserDto =
+        SignUpUserDto.builder().email("invalid").password("short").username(null).build();
 
-    ResponseEntity<AuthResponseDto> result = authController.signUp(signUpUserDto);
+    mockMvc
+        .perform(
+            post("/auth/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(signUpUserDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(responseBody().containsValidationErrors("email", "password", "username"));
+  }
 
-    assertNotNull(result.getBody());
-    assertAll(
-        () -> assertEquals(user.getUsername(), result.getBody().getUser().getUsername()),
-        () -> assertEquals(token, result.getBody().getToken()));
+  @Test
+  void signUp_ValidInput_Returns200andUserWithToken() throws Exception {
+    SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
+    Pair<User, String> serviceResult = AuthTestBuilder.authPair();
+    AuthResponseDto expected = authMapper.authPairToUserResponseDto(serviceResult);
+    when(authService.signUp(authMapper.signUpUserDtoToUser(signUpUserDto)))
+        .thenReturn(serviceResult);
+
+    mockMvc
+        .perform(
+            post("/auth/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(signUpUserDto)))
+        .andExpect(status().isOk())
+        .andExpect(responseBody().containsObjectAsJson(expected, AuthResponseDto.class));
+
+    verify(authService, times(1)).signUp(any(User.class));
   }
 }

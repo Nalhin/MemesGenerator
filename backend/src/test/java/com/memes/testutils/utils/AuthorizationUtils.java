@@ -5,14 +5,19 @@ import org.springframework.http.HttpHeaders;
 
 public class AuthorizationUtils {
 
-    private final static JwtService jwtService = new JwtService(null);
-    static {
-        jwtService.init();
-    }
+  private static final JwtService jwtService = new JwtService(null);
 
-    public static HttpHeaders authHeaders(String username){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer "+ jwtService.sign(username));
-        return httpHeaders;
-    }
+  static {
+    jwtService.init();
+  }
+
+  public static HttpHeaders authHeaders(String username) {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.add("Authorization", "Bearer " + jwtService.sign(username));
+    return httpHeaders;
+  }
+
+  public static boolean validateToken(String token) {
+   return jwtService.validate(token);
+  }
 }

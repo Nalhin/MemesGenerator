@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @Api(tags = "auth")
 @RequiredArgsConstructor
@@ -20,16 +22,16 @@ public class AuthController {
   private final AuthMapper authMapper;
 
   @PostMapping(path = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<AuthResponseDto> login(@RequestBody LoginUserDto loginUserDto) {
+  public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginUserDto loginUserDto) {
 
     Pair<User, String> result =
-        authService.login(loginUserDto.getUsername(), loginUserDto.getUsername());
+        authService.login(loginUserDto.getUsername(), loginUserDto.getPassword());
 
     return ResponseEntity.ok(authMapper.authPairToUserResponseDto(result));
   }
 
   @PostMapping(path = "/auth/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<AuthResponseDto> signUp(@RequestBody SignUpUserDto signUpUserDto) {
+  public ResponseEntity<AuthResponseDto> signUp(@Valid @RequestBody SignUpUserDto signUpUserDto) {
 
     Pair<User, String> result = authService.signUp(authMapper.signUpUserDtoToUser(signUpUserDto));
 

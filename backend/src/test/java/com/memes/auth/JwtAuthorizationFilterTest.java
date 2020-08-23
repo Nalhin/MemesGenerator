@@ -21,9 +21,9 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class JwtAuthorizationUtilsFilterTest {
+class JwtAuthorizationFilterTest {
 
-  private final String AUTH_HEADER = "AuthorizationUtils";
+  private final String AUTH_HEADER = "Authorization";
 
   @Mock private JwtService jwtService;
   @Mock private HttpServletRequest request;

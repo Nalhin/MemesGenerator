@@ -2,7 +2,9 @@ package com.memes.auth;
 
 import com.memes.auth.models.AuthenticatedUser;
 import com.memes.user.User;
+import com.memes.user.UserRepository;
 import com.memes.user.UserService;
+import com.memes.user.UserTestBuilder;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,7 +28,7 @@ class AuthServiceTest {
   @Mock private JwtService jwtService;
   @Mock private AuthenticationManager authenticationManager;
   @Mock private PasswordEncoder passwordEncoder;
-  @Mock private UserService userService;
+  @Mock private UserRepository userRepository;
 
   @InjectMocks private AuthService authService;
 
@@ -34,7 +37,7 @@ class AuthServiceTest {
 
   @BeforeEach
   void setUp() {
-    user = new EasyRandom().nextObject(User.class);
+    user = UserTestBuilder.user().build();
   }
 
   @Test
@@ -58,13 +61,26 @@ class AuthServiceTest {
   @Test
   void signUp_NoConflict_ReturnsUser() {
     when(jwtService.sign(user.getUsername())).thenReturn(token);
-    when(userService.save(any(User.class))).thenReturn(user);
+    when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
+        .thenReturn(false);
+    when(userRepository.save(any(User.class))).thenReturn(user);
 
     Pair<User, String> result = authService.signUp(user);
 
     assertEquals(user, result.getFirst());
     assertEquals(token, result.getSecond());
-    verify(passwordEncoder).encode(anyString());
-    verify(userService).save(any(User.class));
+    verify(passwordEncoder, times(1)).encode(anyString());
+    verify(userRepository, times(1)).save(any(User.class));
+    verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
+  }
+
+  @Test
+  void signUp_UsernameOrEmailTaken_ThrowsResponseStatusException() {
+    when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
+        .thenReturn(true);
+
+    assertThrows(ResponseStatusException.class, () -> authService.signUp(user));
+
+    verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
   }
 }

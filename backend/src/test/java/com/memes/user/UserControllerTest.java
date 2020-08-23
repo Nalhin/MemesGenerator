@@ -15,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
 import static com.memes.testutils.matchers.RequestMatchers.assertThatRequest;
@@ -35,7 +34,7 @@ class UserControllerTest {
 
   @Test
   void getAll_UsersPresent_Returns200AndUsers() throws Exception {
-    List<User> mockUsers = new EasyRandom().objects(User.class, 2).collect(Collectors.toList());
+    List<User> mockUsers = UserTestBuilder.users(4);
     List<UserResponseDto> expected = userMapper.usersToUserResponseDtoList(mockUsers);
     when(userService.findAll()).thenReturn(mockUsers);
 

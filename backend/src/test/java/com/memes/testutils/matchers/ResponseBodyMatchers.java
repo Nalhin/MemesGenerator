@@ -1,24 +1,61 @@
 package com.memes.testutils.matchers;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.memes.shared.dto.ValidationExceptionDto;
+import com.memes.testutils.utils.AuthorizationUtils;
+import org.assertj.core.api.SoftAssertions;
+import org.json.JSONObject;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResponseBodyMatchers {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public <T> ResultMatcher containsObjectAsJson(
-            Object expectedObject,
-            Class<T> targetClass) {
-        return mvcResult -> {
-            String json = mvcResult.getResponse().getContentAsString();
-            T actualObject = objectMapper.readValue(json, targetClass);
-            assertThat(actualObject).isEqualToComparingFieldByField(expectedObject);
-        };
-    }
+  public <T> ResultMatcher containsObjectAsJson(Object expectedObject, Class<T> targetClass) {
+    return mvcResult -> {
+      String json = mvcResult.getResponse().getContentAsString();
+      T actualObject = objectMapper.readValue(json, targetClass);
+      assertThat(actualObject).isEqualToComparingFieldByField(expectedObject);
+    };
+  }
 
-    public static ResponseBodyMatchers responseBody(){
-        return new ResponseBodyMatchers();
-    }
+  public ResultMatcher containsValidationErrors(String... fields) {
+    return mvcResult -> {
+      String json = mvcResult.getResponse().getContentAsString();
+      ArrayNode validationExceptionDto = (ArrayNode) objectMapper.readTree(json).get("errors");
+
+      List<String> fieldErrors =
+          StreamSupport.stream(
+                  Spliterators.spliteratorUnknownSize(
+                      validationExceptionDto.elements(), Spliterator.ORDERED),
+                  false)
+              .map(e -> e.get("field").asText())
+              .collect(Collectors.toList());
+
+      SoftAssertions.assertSoftly(
+          softly -> Arrays.stream(fields).forEach(f -> softly.assertThat(fieldErrors).contains(f)));
+    };
+  }
+
+  public ResultMatcher containsValidJWT(){
+    return mvcResult -> {
+      String json = mvcResult.getResponse().getContentAsString();
+      String token =  objectMapper.readTree(json).get("token").textValue();
+      assertThat(AuthorizationUtils.validateToken(token)).isTrue();
+    };
+  }
+
+  public static ResponseBodyMatchers responseBody() {
+    return new ResponseBodyMatchers();
+  }
 }

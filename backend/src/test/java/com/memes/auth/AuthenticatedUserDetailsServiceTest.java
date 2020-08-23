@@ -2,6 +2,7 @@ package com.memes.auth;
 
 import com.memes.user.User;
 import com.memes.user.UserRepository;
+import com.memes.user.UserTestBuilder;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,13 +26,13 @@ class AuthenticatedUserDetailsServiceTest {
 
   @Test
   void loadUserByUsername_UserFound_ReturnsUser() {
-    User mockUser = new EasyRandom().nextObject(User.class);
-    when(userRepository.findOneByUsername(mockUser.getUsername()))
-        .thenReturn(Optional.of(mockUser));
+    User user = UserTestBuilder.user().build();
+    when(userRepository.findOneByUsername(user.getUsername()))
+        .thenReturn(Optional.of(user));
 
-    UserDetails result = authUserDetailsService.loadUserByUsername(mockUser.getUsername());
+    UserDetails result = authUserDetailsService.loadUserByUsername(user.getUsername());
 
-    assertEquals(mockUser.getUsername(), result.getUsername());
+    assertEquals(user.getUsername(), result.getUsername());
   }
 
   @Test
