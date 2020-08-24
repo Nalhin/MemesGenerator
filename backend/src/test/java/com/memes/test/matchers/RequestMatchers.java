@@ -1,4 +1,4 @@
-package com.memes.testutils.matchers;
+package com.memes.test.matchers;
 
 import org.assertj.core.api.ThrowableAssert;
 import org.assertj.core.api.ThrowableAssertAlternative;

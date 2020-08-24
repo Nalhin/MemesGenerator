@@ -5,6 +5,7 @@ import com.memes.user.User;
 import com.memes.user.UserRepository;
 import com.memes.user.UserService;
 import com.memes.user.UserTestBuilder;
+import org.assertj.core.api.SoftAssertions;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,7 +55,7 @@ class AuthServiceTest {
 
     Pair<User, String> result = authService.login(user.getUsername(), user.getPassword());
 
-    assertEquals(token, result.getSecond());
+    assertThat(result.getSecond()).isEqualTo(token);
     verify(authenticationManager)
         .authenticate(
             new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
@@ -67,8 +70,11 @@ class AuthServiceTest {
 
     Pair<User, String> result = authService.signUp(user);
 
-    assertEquals(user, result.getFirst());
-    assertEquals(token, result.getSecond());
+    SoftAssertions.assertSoftly(
+        softly -> {
+          softly.assertThat(result.getFirst()).isEqualTo(user);
+          softly.assertThat(result.getSecond()).isEqualTo(token);
+        });
     verify(passwordEncoder, times(1)).encode(anyString());
     verify(userRepository, times(1)).save(any(User.class));
     verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
@@ -79,7 +85,7 @@ class AuthServiceTest {
     when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
         .thenReturn(true);
 
-    assertThrows(ResponseStatusException.class, () -> authService.signUp(user));
+    assertThatThrownBy(() -> authService.signUp(user)).isInstanceOf(ResponseStatusException.class);
 
     verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
   }

@@ -1,4 +1,4 @@
-package com.memes.testutils.auth;
+package com.memes.test.auth;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

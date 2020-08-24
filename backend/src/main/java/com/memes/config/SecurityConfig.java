@@ -2,10 +2,12 @@ package com.memes.config;
 
 import com.memes.auth.JwtAuthorizationFilter;
 import com.memes.auth.JwtService;
+import com.memes.auth.SecurityContextFacade;
 import com.memes.auth.models.AnonymousUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
@@ -27,7 +31,7 @@ import java.util.UUID;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final JwtService jwtService;
+  private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
@@ -38,8 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.authorizeRequests().anyRequest().permitAll();
-    http.addFilterBefore(
-        new JwtAuthorizationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
     http.anonymous()
         .authenticationFilter(

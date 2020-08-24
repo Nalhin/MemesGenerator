@@ -1,19 +1,13 @@
-package com.memes.testutils.matchers;
+package com.memes.test.matchers;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.memes.shared.dto.ValidationExceptionDto;
-import com.memes.testutils.utils.AuthorizationUtils;
+import com.memes.test.utils.AuthorizationUtils;
 import org.assertj.core.api.SoftAssertions;
-import org.json.JSONObject;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;

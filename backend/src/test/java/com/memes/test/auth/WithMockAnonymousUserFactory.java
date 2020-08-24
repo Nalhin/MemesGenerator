@@ -1,7 +1,6 @@
-package com.memes.testutils.auth;
+package com.memes.test.auth;
 
 import com.memes.auth.models.AnonymousUser;
-import com.memes.testutils.auth.WithMockAnonymousUser;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;

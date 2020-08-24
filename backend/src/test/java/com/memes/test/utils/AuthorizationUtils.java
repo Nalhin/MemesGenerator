@@ -1,11 +1,11 @@
-package com.memes.testutils.utils;
+package com.memes.test.utils;
 
 import com.memes.auth.JwtService;
 import org.springframework.http.HttpHeaders;
 
 public class AuthorizationUtils {
 
-  private static final JwtService jwtService = new JwtService(null);
+  private static final JwtService jwtService = new JwtService();
 
   static {
     jwtService.init();
@@ -18,6 +18,6 @@ public class AuthorizationUtils {
   }
 
   public static boolean validateToken(String token) {
-   return jwtService.validate(token);
+    return jwtService.validate(token);
   }
 }

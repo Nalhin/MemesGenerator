@@ -3,7 +3,6 @@ package com.memes.auth;
 import com.memes.auth.models.AuthenticatedUser;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service

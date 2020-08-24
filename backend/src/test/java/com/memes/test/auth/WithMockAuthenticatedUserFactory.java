@@ -1,4 +1,4 @@
-package com.memes.testutils.auth;
+package com.memes.test.auth;
 
 import com.memes.auth.models.AuthenticatedUser;
 import com.memes.user.User;

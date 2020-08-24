@@ -1,4 +1,4 @@
-package com.memes.testutils.utils;
+package com.memes.test.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

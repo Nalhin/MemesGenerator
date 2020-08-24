@@ -3,30 +3,31 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
+import com.memes.test.utils.MockSecurityConfig;
 import com.memes.user.User;
+import com.memes.user.UserMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
-import static com.memes.testutils.utils.RequestUtils.asJSON;
+import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
+import static com.memes.test.utils.RequestUtils.asJSON;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class AuthControllerTest {
+@WebMvcTest(controllers = {AuthController.class})
+@Import({AuthMapperImpl.class, UserMapperImpl.class})
+class AuthControllerTest extends MockSecurityConfig {
 
   @Autowired private MockMvc mockMvc;
 

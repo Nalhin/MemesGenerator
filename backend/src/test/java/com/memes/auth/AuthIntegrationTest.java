@@ -1,10 +1,7 @@
 package com.memes.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
-import com.memes.user.User;
 import com.memes.user.UserRepository;
 import com.memes.user.UserTestBuilder;
 import org.junit.jupiter.api.Test;
@@ -15,8 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
-import static com.memes.testutils.utils.RequestUtils.asJSON;
+import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
+import static com.memes.test.utils.RequestUtils.asJSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

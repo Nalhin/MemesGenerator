@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.memes.testutils.matchers.ResponseBodyMatchers.responseBody;
-import static com.memes.testutils.utils.AuthorizationUtils.authHeaders;
+import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
+import static com.memes.test.utils.AuthorizationUtils.authHeaders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +57,7 @@ public class UserIntegrationTest {
   @Test
   void me_UnauthenticatedUser_Returns403() throws Exception {
     mockMvc
-        .perform(get("/users/me").contentType("application/json"))
+        .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isForbidden());
   }
 }

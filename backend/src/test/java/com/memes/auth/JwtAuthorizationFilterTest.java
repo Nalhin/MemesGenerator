@@ -1,14 +1,13 @@
 package com.memes.auth;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.servlet.FilterChain;
@@ -27,27 +26,25 @@ class JwtAuthorizationFilterTest {
 
   @Mock private JwtService jwtService;
   @Mock private HttpServletRequest request;
+  @Mock private UserDetailsService detailsService;
+  @Mock private SecurityContextFacade securityContextFacade;
   @InjectMocks private JwtAuthorizationFilter jwtAuthorizationFilter;
-
-  @Mock private SecurityContext securityContext;
-
-  @BeforeEach
-  void setUp() {
-    SecurityContextHolder.setContext(securityContext);
-  }
 
   @Test
   void doFilterInternal_ValidTokenAndUserFound_ContextCalledWithMockAuth()
       throws ServletException, IOException {
-    UsernamePasswordAuthenticationToken mockAuth = mock(UsernamePasswordAuthenticationToken.class);
+    UserDetails mockDetails = mock(UserDetails.class);
     when(request.getHeader(AUTH_HEADER)).thenReturn("Bearer token");
-    when(jwtService.validate("token")).thenReturn(true);
-    when(jwtService.getAuthentication("token")).thenReturn(mockAuth);
+    when(jwtService.validate(any())).thenReturn(true);
+    when(jwtService.resolveUsernameFromToken("token")).thenReturn("username");
+    when(detailsService.loadUserByUsername("username")).thenReturn(mockDetails);
 
     jwtAuthorizationFilter.doFilterInternal(
         request, mock(HttpServletResponse.class), mock(FilterChain.class));
 
-    verify(securityContext).setAuthentication(mockAuth);
+    verify(securityContextFacade, times(1))
+        .setAuthentication(any(UsernamePasswordAuthenticationToken.class));
+    verify(securityContextFacade, never()).clearAuthentication();
   }
 
   @Test
@@ -57,8 +54,9 @@ class JwtAuthorizationFilterTest {
     jwtAuthorizationFilter.doFilterInternal(
         request, mock(HttpServletResponse.class), mock(FilterChain.class));
 
-    verify(jwtService, never()).getAuthentication(any());
-    verify(securityContext, never()).setAuthentication(any());
+    verify(jwtService, never()).resolveUsernameFromToken(any());
+    verify(securityContextFacade, never()).setAuthentication(any());
+    verify(securityContextFacade, times(1)).clearAuthentication();
   }
 
   @Test
@@ -68,19 +66,22 @@ class JwtAuthorizationFilterTest {
     jwtAuthorizationFilter.doFilterInternal(
         request, mock(HttpServletResponse.class), mock(FilterChain.class));
 
-    verify(jwtService, never()).getAuthentication(any());
-    verify(securityContext, never()).setAuthentication(any());
+    verify(jwtService, never()).validate(any());
+    verify(securityContextFacade, never()).setAuthentication(any());
+    verify(securityContextFacade, times(1)).clearAuthentication();
   }
 
   @Test
   void doFilterInternal_UserNotFound_ContextNotSet() throws ServletException, IOException {
     when(request.getHeader(AUTH_HEADER)).thenReturn("Bearer token");
     when(jwtService.validate(any())).thenReturn(true);
-    when(jwtService.getAuthentication("token")).thenThrow(UsernameNotFoundException.class);
+    when(jwtService.resolveUsernameFromToken("token")).thenReturn("username");
+    when(detailsService.loadUserByUsername("username")).thenThrow(UsernameNotFoundException.class);
 
     jwtAuthorizationFilter.doFilterInternal(
         request, mock(HttpServletResponse.class), mock(FilterChain.class));
 
-    verify(securityContext, never()).setAuthentication(any());
+    verify(securityContextFacade, never()).setAuthentication(any());
+    verify(securityContextFacade, times(1)).clearAuthentication();
   }
 }

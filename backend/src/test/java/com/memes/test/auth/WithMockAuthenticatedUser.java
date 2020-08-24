@@ -1,6 +1,5 @@
-package com.memes.testutils.auth;
+package com.memes.test.auth;
 
-import com.memes.testutils.auth.WithMockAuthenticatedUserFactory;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
