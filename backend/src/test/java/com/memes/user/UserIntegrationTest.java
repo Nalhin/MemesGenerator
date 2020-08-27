@@ -42,7 +42,7 @@ public class UserIntegrationTest {
   @Test
   void me_AuthenticatedUser_Returns200AndUserResponse() throws Exception {
     User user = UserTestBuilder.user().build();
-    userRepository.save(user);
+    user = userRepository.save(user);
     UserResponseDto expected = userMapper.userToUserResponseDto(user);
 
     mockMvc

@@ -1,7 +1,9 @@
 package com.memes.user;
 
 import com.github.javafaker.Faker;
+import com.memes.auth.models.AuthenticatedUser;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -9,6 +11,20 @@ import java.util.stream.Stream;
 public class UserTestBuilder {
 
   private static final Faker faker = new Faker();
+
+  public static AuthenticatedUser.AuthenticatedUserBuilder authUser() {
+    User user = user().build();
+
+    return AuthenticatedUser.authBuilder()
+        .username(user.getUsername())
+        .user(user)
+        .password(user.getPassword())
+        .accountNonExpired(true)
+        .accountNonLocked(true)
+        .credentialsNonExpired(true)
+        .enabled(true)
+        .authorities(Collections.emptyList());
+  }
 
   public static User.UserBuilder user() {
     return User.builder()

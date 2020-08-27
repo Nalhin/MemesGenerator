@@ -1,5 +1,6 @@
 package com.memes.comment;
 
+import com.memes.user.UserTestBuilder;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -30,23 +31,24 @@ class CommentServiceTest {
 
     Comment result = commentService.getOneById(comment.getId());
 
-    assertEquals(comment, result);
+    assertThat(result).isEqualTo(comment);
   }
 
   @Test
   void getOneById_CommentNotFound_ThrowsException() {
     when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(ResponseStatusException.class, () -> commentService.getOneById(1L));
+    assertThatThrownBy(() -> commentService.getOneById(1L))
+        .isInstanceOf(ResponseStatusException.class);
   }
 
   @Test
   void saveComment_OperationSuccessful_ReturnsComment() {
-    Comment comment = new EasyRandom().nextObject(Comment.class);
+    Comment comment = CommentTestBuilder.comment().build();
     when(commentRepository.save(any(Comment.class))).then(returnsFirstArg());
 
-    Comment result = commentService.saveComment(comment);
+    Comment result = commentService.saveComment(comment, UserTestBuilder.authUser().build());
 
-    assertEquals(comment, result);
+    assertThat(result).isEqualTo(comment);
   }
 }

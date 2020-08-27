@@ -12,7 +12,7 @@ public class AuthenticatedUser extends org.springframework.security.core.userdet
 
   private final User user;
 
-  @Builder(builderMethodName = "AuthUserBuilder")
+  @Builder(builderMethodName = "authBuilder")
   public AuthenticatedUser(
       String username,
       String password,

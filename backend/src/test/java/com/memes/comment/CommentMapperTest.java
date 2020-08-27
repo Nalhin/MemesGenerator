@@ -3,11 +3,11 @@ package com.memes.comment;
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
 import com.memes.user.UserMapperImpl;
+import org.assertj.core.api.SoftAssertions;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommentMapperTest {
 
@@ -19,11 +19,15 @@ public class CommentMapperTest {
 
     CommentResponseDto result = commentMapper.commentToCommentResponseDto(comment);
 
-    assertAll(
-        () -> assertEquals(comment.getCreated(), result.getCreated()),
-        () -> assertEquals(comment.getContent(), result.getContent()),
-        () -> assertEquals(comment.getId(), result.getId()),
-        () -> assertEquals(comment.getAuthor().getEmail(), result.getAuthor().getEmail()));
+    SoftAssertions.assertSoftly(
+        softly -> {
+          softly.assertThat(result.getCreated()).isEqualTo(comment.getCreated());
+          softly.assertThat(result.getContent()).isEqualTo(comment.getContent());
+          softly.assertThat(result.getId()).isEqualTo(comment.getId());
+          softly
+              .assertThat(result.getAuthor().getEmail())
+              .isEqualTo(comment.getAuthor().getEmail());
+        });
   }
 
   @Test
@@ -32,6 +36,6 @@ public class CommentMapperTest {
 
     Comment result = commentMapper.saveCommentDtoToComment(saveCommentDto);
 
-    assertEquals(saveCommentDto.getContent(), result.getContent());
+    assertThat(saveCommentDto.getContent()).isEqualTo(result.getContent());
   }
 }

@@ -56,7 +56,7 @@ class UserControllerTest extends MockSecurityConfig {
 
   @Test
   @WithMockAnonymousUser()
-  void me_whenUnauthenticatedUser_Returns403() throws Exception {
+  void me_UnauthenticatedUser_Returns403() throws Exception {
     mockMvc
         .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isForbidden());

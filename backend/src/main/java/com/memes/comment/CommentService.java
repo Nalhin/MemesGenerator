@@ -1,5 +1,6 @@
 package com.memes.comment;
 
+import com.memes.auth.models.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ public class CommentService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
   }
 
-  public Comment saveComment(Comment comment) {
+  public Comment saveComment(Comment comment, AuthenticatedUser user) {
+    comment.setAuthor(user.getPresentUser());
     return this.commentRepository.save(comment);
   }
 }

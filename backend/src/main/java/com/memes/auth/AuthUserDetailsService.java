@@ -24,7 +24,7 @@ public class AuthUserDetailsService implements UserDetailsService {
         .findOneByUsername(username)
         .map(
             (user) ->
-                AuthenticatedUser.AuthUserBuilder()
+                AuthenticatedUser.authBuilder()
                     .username(user.getUsername())
                     .user(user)
                     .password(user.getPassword())

@@ -21,7 +21,7 @@ public class WithMockAuthenticatedUserFactory
         user.setId(authenticatedUser.id());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        AuthenticatedUser authUser = AuthenticatedUser.AuthUserBuilder()
+        AuthenticatedUser authUser = AuthenticatedUser.authBuilder()
                 .user(user).accountNonExpired(true).accountNonLocked(true)
                 .authorities(Collections.emptyList())
                 .credentialsNonExpired(true).password(user.getPassword())

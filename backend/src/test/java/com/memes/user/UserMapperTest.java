@@ -20,6 +20,7 @@ class UserMapperTest {
         softly -> {
           softly.assertThat(result.getUsername()).isEqualTo(user.getUsername());
           softly.assertThat(result.getEmail()).isEqualTo(user.getEmail());
+          softly.assertThat(result.getId()).isEqualTo(user.getId());
         });
   }
 

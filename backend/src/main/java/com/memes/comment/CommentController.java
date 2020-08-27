@@ -1,7 +1,10 @@
 package com.memes.comment;
 
+import com.memes.auth.models.AuthenticatedUser;
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
+import com.memes.shared.annotations.Authenticated;
+import com.memes.shared.annotations.CurrentUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -28,12 +32,15 @@ public class CommentController {
         commentMapper.commentToCommentResponseDto(commentService.getOneById(commentId)));
   }
 
+  @Authenticated
   @PostMapping(path = "/comments", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Save comment")
   public ResponseEntity<CommentResponseDto> saveComment(
-      @RequestBody SaveCommentDto saveCommentDto) {
+      @Valid @RequestBody SaveCommentDto saveCommentDto, @CurrentUser AuthenticatedUser user) {
+
     Comment savedComment =
-        this.commentService.saveComment(commentMapper.saveCommentDtoToComment(saveCommentDto));
+        this.commentService.saveComment(
+            commentMapper.saveCommentDtoToComment(saveCommentDto), user);
 
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
