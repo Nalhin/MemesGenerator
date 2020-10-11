@@ -2,35 +2,46 @@ package com.memes.template;
 
 import com.memes.template.dto.SaveTemplateDto;
 import com.memes.template.dto.TemplateResponseDto;
-import org.jeasy.random.EasyRandom;
+import com.memes.template.test.TemplateTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TemplateMapperTest {
 
   private final TemplateMapper templateMapper = new TemplateMapperImpl();
 
-  @Test
-  void saveTemplateDtoToTemplate_FilledSaveTemplateDto_ReturnsTemplate() {
-    SaveTemplateDto saveTemplateDto = new EasyRandom().nextObject(SaveTemplateDto.class);
+  @Nested
+  class SaveTemplateDtoToTemplate {
 
-    Template result = templateMapper.saveTemplateDtoToTemplate(saveTemplateDto);
+    @Test
+    @DisplayName("Should map SaveTemplateDto to Template")
+    void mapsFromDto() {
+      SaveTemplateDto providedDto = TemplateTestBuilder.saveTemplateDto().build();
 
-    assertAll(
-        () -> assertEquals(saveTemplateDto.getTitle(), result.getTitle()),
-        () -> assertEquals(saveTemplateDto.getUrl(), result.getUrl()));
+      Template result = templateMapper.saveTemplateDtoToTemplate(providedDto);
+
+      assertThat(result)
+          .extracting("title", "url")
+          .containsExactly(providedDto.getTitle(), providedDto.getUrl());
+    }
   }
 
-  @Test
-  void templateToTemplateResponseDto_FilledTemplate_ReturnsTemplateResponseDto() {
-    Template template = new EasyRandom().nextObject(Template.class);
+  @Nested
+  class TemplateToTemplateResponseDto {
 
-    TemplateResponseDto result = templateMapper.templateToTemplateResponseDto(template);
+    @Test
+    @DisplayName("Should map Template to TemplateResponseDto")
+    void mapsToDto() {
+      Template template = TemplateTestBuilder.template().build();
 
-    assertAll(
-        () -> assertEquals(template.getTitle(), result.getTitle()),
-        () -> assertEquals(template.getUrl(), result.getUrl()),
-        () -> assertEquals(template.getId(), result.getId()));
+      TemplateResponseDto result = templateMapper.templateToTemplateResponseDto(template);
+
+      assertThat(result)
+          .extracting("id", "title", "url")
+          .containsExactly(template.getId(), template.getTitle(), template.getUrl());
+    }
   }
 }

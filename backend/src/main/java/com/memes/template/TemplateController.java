@@ -23,7 +23,7 @@ public class TemplateController {
 
   @GetMapping(path = "/templates/{templateId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Get template by id")
-  public ResponseEntity<TemplateResponseDto> getById(@PathVariable Long templateId) {
+  public ResponseEntity<TemplateResponseDto> getTemplateById(@PathVariable Long templateId) {
     TemplateResponseDto templateResponseDto =
         templateMapper.templateToTemplateResponseDto(templateService.getOneById(templateId));
 

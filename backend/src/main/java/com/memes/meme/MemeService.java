@@ -34,7 +34,6 @@ public class MemeService {
     return memeRepository.findAll(PageRequest.of(currentPage, 10));
   }
 
-  @Transactional
   public Meme save(SaveMemeDto saveMemeDto, MultipartFile file, AuthUser authUser) {
     Meme meme = new Meme();
     authUser.getUser().ifPresent(meme::setAuthor);

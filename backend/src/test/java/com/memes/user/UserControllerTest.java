@@ -4,6 +4,9 @@ import com.memes.test.auth.WithMockAnonymousUser;
 import com.memes.test.auth.WithMockAuthenticatedUser;
 import com.memes.test.utils.MockSecurityConfig;
 import com.memes.user.dto.UserResponseDto;
+import com.memes.user.test.UserTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,33 +35,44 @@ class UserControllerTest extends MockSecurityConfig {
 
   @MockBean private UserService userService;
 
-  @Test
-  void getAll_UsersPresent_Returns200AndUsers() throws Exception {
-    List<User> mockUsers = UserTestBuilder.users(4);
-    List<UserResponseDto> expected = userMapper.usersToUserResponseDtoList(mockUsers);
-    when(userService.findAll()).thenReturn(mockUsers);
+  @Nested
+  class GetAll {
 
-    mockMvc
-        .perform(get("/users").contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsObjectAsJson(expected, UserResponseDto[].class));
+    @Test
+    @DisplayName("Should return OK (200) status code and UserResponseDto List")
+    void usersPresent() throws Exception {
+      List<User> mockUsers = UserTestBuilder.users(4);
+      List<UserResponseDto> expectedResult = userMapper.usersToUserResponseDtoList(mockUsers);
+      when(userService.findAll()).thenReturn(mockUsers);
 
-    verify(userService, times(1)).findAll();
+      mockMvc
+          .perform(get("/users").contentType(MediaType.APPLICATION_JSON_VALUE))
+          .andExpect(status().isOk())
+          .andExpect(responseBody().containsObjectAsJson(expectedResult, UserResponseDto[].class));
+
+      verify(userService, times(1)).findAll();
+    }
   }
 
-  @Test
-  @WithMockAuthenticatedUser()
-  void me_AuthenticatedUser_Returns200AndUserResponse() throws Exception {
-    mockMvc
-        .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk());
-  }
+  @Nested
+  class Me {
+    @Test
+    @DisplayName(
+        "Should return OK (200) status code and UserResponseDto when user is authenticated")
+    @WithMockAuthenticatedUser
+    void authenticatedUser() throws Exception {
+      mockMvc
+          .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
+          .andExpect(status().isOk());
+    }
 
-  @Test
-  @WithMockAnonymousUser()
-  void me_UnauthenticatedUser_Returns403() throws Exception {
-    mockMvc
-        .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isForbidden());
+    @Test
+    @DisplayName("Should return FORBIDDEN (403) status code when user is unauthenticated")
+    @WithMockAnonymousUser
+    void anonymousUser() throws Exception {
+      mockMvc
+          .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
+          .andExpect(status().isForbidden());
+    }
   }
 }

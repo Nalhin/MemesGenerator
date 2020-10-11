@@ -2,7 +2,9 @@ package com.memes.auth;
 
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.UserTestBuilder;
+import com.memes.user.test.UserTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +17,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,21 +25,27 @@ class AuthenticatedUserDetailsServiceTest {
   @Mock private UserRepository userRepository;
   @InjectMocks private AuthUserDetailsService authUserDetailsService;
 
-  @Test
-  void loadUserByUsername_UserFound_ReturnsUser() {
-    User user = UserTestBuilder.user().build();
-    when(userRepository.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
+  @Nested
+  class LoadUserByUsername {
 
-    UserDetails result = authUserDetailsService.loadUserByUsername(user.getUsername());
+    @Test
+    @DisplayName("Should throw UserNotFoundException when user is not found")
+    void throwsUserNotFoundException(){
+      when(userRepository.findOneByUsername("")).thenReturn(Optional.empty());
 
-    assertThat(result.getUsername()).isEqualTo(user.getUsername());
-  }
+      assertThatThrownBy(() -> authUserDetailsService.loadUserByUsername(""))
+              .isInstanceOf(UsernameNotFoundException.class);
+    }
 
-  @Test
-  void loadUserByUsername_UserNotFound_ThrowsUsernameNotFoundException() {
-    when(userRepository.findOneByUsername(anyString())).thenReturn(Optional.empty());
+    @Test
+    @DisplayName("Should return UserDetails when user is found")
+    void returnUserDetails(){
+      User user = UserTestBuilder.user().build();
+      when(userRepository.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-    assertThatThrownBy(() -> authUserDetailsService.loadUserByUsername(""))
-        .isInstanceOf(UsernameNotFoundException.class);
+      UserDetails actualResult = authUserDetailsService.loadUserByUsername(user.getUsername());
+
+      assertThat(actualResult.getUsername()).isEqualTo(user.getUsername());
+    }
   }
 }

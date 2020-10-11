@@ -3,9 +3,12 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
+import com.memes.auth.test.AuthTestBuilder;
 import com.memes.test.utils.MockSecurityConfig;
 import com.memes.user.User;
 import com.memes.user.UserMapperImpl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,67 +38,84 @@ class AuthControllerTest extends MockSecurityConfig {
 
   @Autowired private AuthMapper authMapper;
 
-  @Test
-  void login_ValidInput_Returns200AndUserWithToken() throws Exception {
-    LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
-    Pair<User, String> serviceReturn = AuthTestBuilder.authPair();
-    AuthResponseDto expected = authMapper.authPairToUserResponseDto(serviceReturn);
-    when(authService.login(loginUserDto.getUsername(), loginUserDto.getPassword()))
-        .thenReturn(serviceReturn);
+  @Nested
+  class Login {
+    @Test
+    @DisplayName("Should return OK (200) status code and AuthResponseDto")
+    void returns200() throws Exception {
+      LoginUserDto providedRequestBody = AuthTestBuilder.loginUserDto().build();
+      Pair<User, String> serviceReturn = AuthTestBuilder.authPair();
+      when(authService.login(providedRequestBody.getUsername(), providedRequestBody.getPassword()))
+          .thenReturn(serviceReturn);
 
-    mockMvc
-        .perform(
-            post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(loginUserDto)))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsObjectAsJson(expected, AuthResponseDto.class));
+      mockMvc
+          .perform(
+              post("/auth/login")
+                  .contentType(MediaType.APPLICATION_JSON_VALUE)
+                  .content(asJSON(providedRequestBody)))
+          .andExpect(status().isOk())
+          .andExpect(
+              responseBody()
+                  .containsObjectAsJson(
+                      authMapper.authPairToUserResponseDto(serviceReturn), AuthResponseDto.class));
+    }
+
+    @Test
+    @DisplayName(
+        "Should return BAD_REQUEST (400) status code and validation errors when request body is invalid")
+    void returns403() throws Exception {
+      LoginUserDto providedRequestBody =
+          AuthTestBuilder.loginUserDto().password(null).username(null).build();
+
+      mockMvc
+          .perform(
+              post("/auth/login")
+                  .contentType(MediaType.APPLICATION_JSON_VALUE)
+                  .content(asJSON(providedRequestBody)))
+          .andExpect(status().isBadRequest())
+          .andExpect(responseBody().containsValidationErrors("password", "username"));
+    }
   }
 
-  @Test
-  void login_NullFields_ReturnsValidationErrors() throws Exception {
-    LoginUserDto loginUserDto =
-        AuthTestBuilder.loginUserDto().password(null).username(null).build();
+  @Nested
+  class SignUp {
 
-    mockMvc
-        .perform(
-            post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(loginUserDto)))
-        .andExpect(status().isBadRequest())
-        .andExpect(responseBody().containsValidationErrors("password", "username"));
-  }
+    @Test
+    @DisplayName("Should return OK (200) status code and AuthResponseDto")
+    void returns200() throws Exception {
+      SignUpUserDto providedRequestBody = AuthTestBuilder.signUpUserDto().build();
+      Pair<User, String> serviceResult = AuthTestBuilder.authPair();
+      when(authService.signUp(authMapper.signUpUserDtoToUser(providedRequestBody)))
+          .thenReturn(serviceResult);
 
-  @Test
-  void signUp_InvalidInput_Returns400AndValidationErrors() throws Exception {
-    SignUpUserDto signUpUserDto =
-        SignUpUserDto.builder().email("invalid").password("short").username(null).build();
+      mockMvc
+          .perform(
+              post("/auth/sign-up")
+                  .contentType(MediaType.APPLICATION_JSON_VALUE)
+                  .content(asJSON(providedRequestBody)))
+          .andExpect(status().isOk())
+          .andExpect(
+              responseBody()
+                  .containsObjectAsJson(
+                      authMapper.authPairToUserResponseDto(serviceResult), AuthResponseDto.class));
 
-    mockMvc
-        .perform(
-            post("/auth/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(signUpUserDto)))
-        .andExpect(status().isBadRequest())
-        .andExpect(responseBody().containsValidationErrors("email", "password", "username"));
-  }
+      verify(authService, times(1)).signUp(any(User.class));
+    }
 
-  @Test
-  void signUp_ValidInput_Returns200andUserWithToken() throws Exception {
-    SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
-    Pair<User, String> serviceResult = AuthTestBuilder.authPair();
-    AuthResponseDto expected = authMapper.authPairToUserResponseDto(serviceResult);
-    when(authService.signUp(authMapper.signUpUserDtoToUser(signUpUserDto)))
-        .thenReturn(serviceResult);
+    @Test
+    @DisplayName(
+        "Should return BAD_REQUEST (400) status code and validation errors when request body is invalid")
+    void returns400() throws Exception {
+      SignUpUserDto signUpUserDto =
+          SignUpUserDto.builder().email("invalid").password("short").username(null).build();
 
-    mockMvc
-        .perform(
-            post("/auth/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(signUpUserDto)))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsObjectAsJson(expected, AuthResponseDto.class));
-
-    verify(authService, times(1)).signUp(any(User.class));
+      mockMvc
+          .perform(
+              post("/auth/sign-up")
+                  .contentType(MediaType.APPLICATION_JSON_VALUE)
+                  .content(asJSON(signUpUserDto)))
+          .andExpect(status().isBadRequest())
+          .andExpect(responseBody().containsValidationErrors("email", "password", "username"));
+    }
   }
 }

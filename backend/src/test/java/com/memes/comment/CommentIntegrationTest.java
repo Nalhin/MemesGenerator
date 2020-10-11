@@ -2,9 +2,10 @@ package com.memes.comment;
 
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
+import com.memes.comment.test.CommentTestBuilder;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.UserTestBuilder;
+import com.memes.user.test.UserTestBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

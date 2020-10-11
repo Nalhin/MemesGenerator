@@ -1,6 +1,7 @@
 package com.memes.meme;
 
 import com.memes.meme.dto.MemeResponseDto;
+import com.memes.meme.dto.SaveMemeDto;
 import com.memes.user.UserMapper;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

@@ -1,6 +1,7 @@
 package com.memes.user;
 
 import com.memes.user.dto.UserResponseDto;
+import com.memes.user.test.UserTestBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,13 @@
 package com.memes.auth;
 
-import com.memes.auth.models.AuthenticatedUser;
+import com.memes.auth.test.AuthTestBuilder;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.UserService;
-import com.memes.user.UserTestBuilder;
+import com.memes.user.test.UserTestBuilder;
 import org.assertj.core.api.SoftAssertions;
-import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,13 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,50 +41,59 @@ class AuthServiceTest {
     user = UserTestBuilder.user().build();
   }
 
-  @Test
-  void login_ValidCredentials_ReturnsUser() {
-    Authentication mockAuth = mock(Authentication.class);
-    AuthenticatedUser mockAuthUser = mock(AuthenticatedUser.class);
-    when(jwtService.sign(user.getUsername())).thenReturn(token);
-    when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-        .thenReturn(mockAuth);
-    when(mockAuthUser.getPresentUser()).thenReturn(user);
-    when(mockAuth.getPrincipal()).thenReturn(mockAuthUser);
+  @Nested
+  class Login {
 
-    Pair<User, String> result = authService.login(user.getUsername(), user.getPassword());
+    @Test
+    @DisplayName("Should authenticate user with valid credentials and return User and auth token")
+    void validCredentials() {
+      when(jwtService.sign(user.getUsername())).thenReturn(token);
+      when(authenticationManager.authenticate(any()))
+          .thenReturn(AuthTestBuilder.authentication(user));
 
-    assertThat(result.getSecond()).isEqualTo(token);
-    verify(authenticationManager)
-        .authenticate(
-            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+      Pair<User, String> result = authService.login(user.getUsername(), user.getPassword());
+
+      assertThat(result.getSecond()).isEqualTo(token);
+      verify(authenticationManager)
+          .authenticate(
+              new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+    }
   }
 
-  @Test
-  void signUp_NoConflict_ReturnsUser() {
-    when(jwtService.sign(user.getUsername())).thenReturn(token);
-    when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
-        .thenReturn(false);
-    when(userRepository.save(any(User.class))).thenReturn(user);
+  @Nested
+  class SignUp {
 
-    Pair<User, String> result = authService.signUp(user);
+    @Test
+    @DisplayName(
+        "Should create user and return User and auth token when username and email are unique")
+    void uniqueUser() {
+      when(jwtService.sign(user.getUsername())).thenReturn(token);
+      when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
+          .thenReturn(false);
+      when(userRepository.save(any())).thenReturn(user);
 
-    SoftAssertions.assertSoftly(
-        softly -> {
-          softly.assertThat(result.getFirst()).isEqualTo(user);
-          softly.assertThat(result.getSecond()).isEqualTo(token);
-        });
-    verify(passwordEncoder, times(1)).encode(anyString());
-    verify(userRepository, times(1)).save(any(User.class));
-    verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
-  }
+      Pair<User, String> result = authService.signUp(user);
 
-  @Test
-  void signUp_UsernameOrEmailTaken_ThrowsResponseStatusException() {
-    when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
-        .thenReturn(true);
+      SoftAssertions.assertSoftly(
+          softly -> {
+            softly.assertThat(result.getFirst()).isEqualTo(user);
+            softly.assertThat(result.getSecond()).isEqualTo(token);
+          });
+      verify(passwordEncoder, times(1)).encode(anyString());
+      verify(userRepository, times(1)).save(any());
+      verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
+    }
 
-    assertThatThrownBy(() -> authService.signUp(user)).isInstanceOf(ResponseStatusException.class);
+    @Test
+    @DisplayName("Should throw ResponseStatusException if username or email is taken")
+    void usernameOrEmailTaken() {
+      when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
+          .thenReturn(true);
 
-    verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
+      assertThatThrownBy(() -> authService.signUp(user))
+          .isInstanceOf(ResponseStatusException.class);
+
+      verify(userRepository, times(1)).existsByEmailOrUsername(user.getEmail(), user.getUsername());
+    }
   }
 }

@@ -2,8 +2,10 @@ package com.memes.auth;
 
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
+import com.memes.auth.test.AuthTestBuilder;
 import com.memes.user.UserRepository;
-import com.memes.user.UserTestBuilder;
+import com.memes.user.test.UserTestBuilder;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -59,6 +61,12 @@ public class AuthIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(asJSON(loginUserDto)))
         .andExpect(status().isForbidden());
+  }
+
+  @Nested
+  class SignUp{
+    
+
   }
 
   @Test

@@ -1,7 +1,9 @@
 package com.memes.comment;
 
-import com.memes.user.UserTestBuilder;
-import org.jeasy.random.EasyRandom;
+import com.memes.auth.test.AuthTestBuilder;
+import com.memes.comment.test.CommentTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,31 +25,43 @@ class CommentServiceTest {
   @Mock private CommentRepository commentRepository;
   @InjectMocks private CommentService commentService;
 
-  @Test
-  void getOneById_CommentFound_ReturnsComment() {
-    Comment comment = new EasyRandom().nextObject(Comment.class);
-    when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
+  @Nested
+  class GetOneById {
 
-    Comment result = commentService.getOneById(comment.getId());
+    @Test
+    @DisplayName("Should return comment when found")
+    void returnsComment() {
+      Comment expectedComment = CommentTestBuilder.comment().build();
+      when(commentRepository.findById(expectedComment.getId()))
+          .thenReturn(Optional.of(expectedComment));
 
-    assertThat(result).isEqualTo(comment);
+      Comment actualComment = commentService.getOneById(expectedComment.getId());
+
+      assertThat(actualComment).isEqualTo(expectedComment);
+    }
+
+    @Test
+    @DisplayName("Should throw exception")
+    void throwsException() {
+      when(commentRepository.findById(1L)).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> commentService.getOneById(1L))
+          .isInstanceOf(ResponseStatusException.class);
+    }
   }
 
-  @Test
-  void getOneById_CommentNotFound_ThrowsException() {
-    when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
+  @Nested
+  class Save {
+    @Test
+    @DisplayName("Should save and return saved comment")
+    void returnsComment() {
+      Comment expectedComment = CommentTestBuilder.comment().build();
+      when(commentRepository.save(any(Comment.class))).then(returnsFirstArg());
 
-    assertThatThrownBy(() -> commentService.getOneById(1L))
-        .isInstanceOf(ResponseStatusException.class);
-  }
+      Comment actualComment =
+          commentService.saveComment(expectedComment, AuthTestBuilder.authUser().build());
 
-  @Test
-  void saveComment_OperationSuccessful_ReturnsComment() {
-    Comment comment = CommentTestBuilder.comment().build();
-    when(commentRepository.save(any(Comment.class))).then(returnsFirstArg());
-
-    Comment result = commentService.saveComment(comment, UserTestBuilder.authUser().build());
-
-    assertThat(result).isEqualTo(comment);
+      assertThat(actualComment).isEqualTo(expectedComment);
+    }
   }
 }

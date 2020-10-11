@@ -1,6 +1,8 @@
 package com.memes.auth;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,40 +20,41 @@ class JwtServiceTest {
     jwtService.init();
   }
 
-  @Test
-  void sign_ValidUsername_ReturnsValidToken() {
-    String username = "username";
+  @Nested
+  class Sign {
 
-    String result = jwtService.sign(username);
+    @Test
+    @DisplayName("Should generate and return a valid token")
+    void generatesAndReturnsValidToken() {
+      String username = "username";
 
-    assertThat(jwtService.validate(result)).isTrue();
+      String actualResult = jwtService.sign(username);
+
+      assertThat(jwtService.validate(actualResult)).isTrue();
+    }
   }
 
-  @Test
-  void getAuthentication_ValidToken_ReturnAuthTokenWithUser() {
-    String username = "username";
-    String token = jwtService.sign(username);
+  @Nested
+  class Validate {
 
-    String result = jwtService.resolveUsernameFromToken(token);
+    @Test
+    @DisplayName("Should return true when provided token is invalid")
+    void validTokenProvided() {
+      String token = jwtService.sign("username");
 
-    assertThat(result).isEqualTo(username);
-  }
+      boolean actualResult = jwtService.validate(token);
 
-  @Test
-  void validate_ValidToken_ReturnsTrue() {
-    String token = jwtService.sign("username");
+      assertThat(actualResult).isTrue();
+    }
 
-    boolean result = jwtService.validate(token);
+    @Test
+    @DisplayName("Should return false when provided token is invalid")
+    void invalidTokenProvided() {
+      String token = "invalid";
 
-    assertThat(result).isTrue();
-  }
+      boolean actualResult = jwtService.validate(token);
 
-  @Test
-  void validate_InvalidToken_ReturnsFalse() {
-    String token = "invalid";
-
-    boolean result = jwtService.validate(token);
-
-    assertThat(result).isFalse();
+      assertThat(actualResult).isFalse();
+    }
   }
 }

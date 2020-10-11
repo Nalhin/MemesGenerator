@@ -1,6 +1,8 @@
 package com.memes.template;
 
-import org.jeasy.random.EasyRandom;
+import com.memes.template.test.TemplateTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,10 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,42 +28,57 @@ class TemplateServiceTest {
   @Mock private TemplateRepository templateRepository;
   @InjectMocks private TemplateService templateService;
 
-  private final EasyRandom random = new EasyRandom();
+  @Nested
+  class GetOneById {
 
-  @Test
-  void getOneById_TemplateFound_ReturnTemplate() {
-    Template template = random.nextObject(Template.class);
-    when(templateRepository.findById(anyLong())).thenReturn(Optional.of(template));
+    @Test
+    @DisplayName("Should return template when found")
+    void returnsTemplate() {
+      Template expectedTemplate = TemplateTestBuilder.template().build();
+      when(templateRepository.findById(anyLong())).thenReturn(Optional.of(expectedTemplate));
 
-    Template result = templateService.getOneById(template.getId());
+      Template actualTemplate = templateService.getOneById(expectedTemplate.getId());
 
-    assertEquals(template, result);
+      assertThat(expectedTemplate).isEqualTo(actualTemplate);
+    }
+
+    @Test
+    @DisplayName("Should throw ResponseStatusException when template is not found")
+    void throwsResponseStatusException() {
+      when(templateRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> templateService.getOneById(1L))
+          .isInstanceOf(ResponseStatusException.class);
+    }
   }
 
-  @Test
-  void getOneById_TemplateNotFound_ThrowsResponseStatusException() {
-    when(templateRepository.findById(anyLong())).thenReturn(Optional.empty());
-    assertThrows(ResponseStatusException.class, () -> templateService.getOneById(1L));
+  @Nested
+  class FindAll {
+
+    @Test
+    @DisplayName("Should query and return paginated templates")
+    void returnsTemplates() {
+      Page<Template> expectedPage = new PageImpl<>(TemplateTestBuilder.templates(4));
+      when(templateRepository.findAll(any(PageRequest.class))).thenReturn(expectedPage);
+
+      Page<Template> actualPage = templateService.findAll(1);
+
+      assertThat(actualPage).containsExactlyElementsOf(expectedPage);
+    }
   }
 
-  @Test
-  void findAll_TemplatesPresent_ReturnsSameSize() {
-    Page<Template> templatePage =
-        new PageImpl<>(random.objects(Template.class, 4).collect(Collectors.toList()));
-    when(templateRepository.findAll(any(PageRequest.class))).thenReturn(templatePage);
+  @Nested
+  class Save {
 
-    Page<Template> result = templateService.findAll(1);
+    @Test
+    @DisplayName("Should save and return saved template")
+    void savesTemplate() {
+      Template expectedTemplate = TemplateTestBuilder.template().build();
+      when(templateRepository.save(expectedTemplate)).then(returnsFirstArg());
 
-    assertEquals(templatePage.getSize(), result.getSize());
-  }
+      Template actualTemplate = templateService.save(expectedTemplate);
 
-  @Test
-  void save_OperationSuccessful_ReturnsSavedTemplate() {
-    Template template = random.nextObject(Template.class);
-    when(templateRepository.save(template)).then(returnsFirstArg());
-
-    Template result = templateService.save(template);
-
-    assertEquals(template, result);
+      assertThat(actualTemplate).isEqualTo(expectedTemplate);
+    }
   }
 }

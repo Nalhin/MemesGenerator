@@ -2,9 +2,11 @@ package com.memes.comment;
 
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
+import com.memes.comment.test.CommentTestBuilder;
 import com.memes.user.UserMapperImpl;
 import org.assertj.core.api.SoftAssertions;
-import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,29 +15,39 @@ public class CommentMapperTest {
 
   private final CommentMapper commentMapper = new CommentMapperImpl(new UserMapperImpl());
 
-  @Test
-  void commentToCommentResponseDto_FilledComment_ReturnsCommentResponseDto() {
-    Comment comment = new EasyRandom().nextObject(Comment.class);
+  @Nested
+  class CommentToCommentResponseDto {
 
-    CommentResponseDto result = commentMapper.commentToCommentResponseDto(comment);
+    @Test
+    @DisplayName("Should map Comment to CommentResponseDto")
+    void mapsToDto() {
+      Comment comment = CommentTestBuilder.commentWithAuthor().build();
 
-    SoftAssertions.assertSoftly(
-        softly -> {
-          softly.assertThat(result.getCreated()).isEqualTo(comment.getCreated());
-          softly.assertThat(result.getContent()).isEqualTo(comment.getContent());
-          softly.assertThat(result.getId()).isEqualTo(comment.getId());
-          softly
-              .assertThat(result.getAuthor().getEmail())
-              .isEqualTo(comment.getAuthor().getEmail());
-        });
+      CommentResponseDto result = commentMapper.commentToCommentResponseDto(comment);
+
+      SoftAssertions.assertSoftly(
+          softly -> {
+            softly.assertThat(result.getCreated()).isEqualTo(comment.getCreated());
+            softly.assertThat(result.getContent()).isEqualTo(comment.getContent());
+            softly.assertThat(result.getId()).isEqualTo(comment.getId());
+            softly
+                .assertThat(result.getAuthor().getEmail())
+                .isEqualTo(comment.getAuthor().getEmail());
+          });
+    }
   }
 
-  @Test
-  void saveCommentDtoToComment_FilledSaveCommentDto_ReturnsComment() {
-    SaveCommentDto saveCommentDto = new EasyRandom().nextObject(SaveCommentDto.class);
+  @Nested
+  class SaveCommentDtoToComment {
 
-    Comment result = commentMapper.saveCommentDtoToComment(saveCommentDto);
+    @Test
+    @DisplayName("Should map SaveCommentDto to Comment")
+    void mapsFromDto() {
+      SaveCommentDto providedDto = CommentTestBuilder.saveCommentDto().build();
 
-    assertThat(saveCommentDto.getContent()).isEqualTo(result.getContent());
+      Comment actualComment = commentMapper.saveCommentDtoToComment(providedDto);
+
+      assertThat(actualComment).extracting("content").isEqualTo(providedDto.getContent());
+    }
   }
 }

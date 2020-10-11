@@ -1,5 +1,8 @@
 package com.memes.user;
 
+import com.memes.user.test.UserTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,32 +22,60 @@ class UserServiceTest {
 
   @InjectMocks private UserService userService;
 
-  @Test
-  void findAll_UsersPresent_ReturnsUsers() {
-    List<User> mockUsers = UserTestBuilder.users(4);
-    when(userRepository.findAll()).thenReturn(mockUsers);
+  @Nested
+  class FindAll {
 
-    List<User> result = userService.findAll();
+    @Test
+    @DisplayName("Should return users if found")
+    void returnsUsers() {
+      List<User> mockUsers = UserTestBuilder.users(4);
+      when(userRepository.findAll()).thenReturn(mockUsers);
 
-    assertThat(mockUsers).isEqualTo(result);
+      List<User> result = userService.findAll();
+
+      assertThat(mockUsers).isEqualTo(result);
+    }
   }
 
-  @Test
-  void findOneByUsername_UserFound_ReturnsUser() {
-    User user = UserTestBuilder.user().build();
-    when(userRepository.findOneByUsername(user.getUsername())).thenReturn(Optional.of(user));
+  @Nested
+  class FindOneByUsername {
 
-    Optional<User> result = userService.findOneByUsername(user.getUsername());
+    @Test
+    @DisplayName("Should return user if user is found")
+    void userFound() {
+      User expectedResult = UserTestBuilder.user().build();
+      when(userRepository.findOneByUsername(expectedResult.getUsername()))
+          .thenReturn(Optional.of(expectedResult));
 
-    assertThat(Optional.of(user)).isEqualTo(result);
+      Optional<User> actualResult = userService.findOneByUsername(expectedResult.getUsername());
+
+      assertThat(actualResult).contains(expectedResult);
+    }
+
+    @Test
+    @DisplayName("Should return empty optional if user is not found")
+    void userNotFound() {
+      User expectedResult = UserTestBuilder.user().build();
+      when(userRepository.findOneByUsername(expectedResult.getUsername()))
+          .thenReturn(Optional.empty());
+
+      Optional<User> actualResult = userService.findOneByUsername(expectedResult.getUsername());
+
+      assertThat(actualResult).isEmpty();
+    }
   }
 
-  @Test
-  void save_UserSaved_SaveMethodCalled() {
-    User user = UserTestBuilder.user().build();
+  @Nested
+  class Save {
 
-    userService.save(user);
+    @Test
+    @DisplayName("Should persist provided data")
+    void savesUserData() {
+      User user = UserTestBuilder.user().build();
 
-    verify(userRepository).save(user);
+      userService.save(user);
+
+      verify(userRepository).save(user);
+    }
   }
 }

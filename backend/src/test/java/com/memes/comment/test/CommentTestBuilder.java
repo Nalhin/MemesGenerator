@@ -1,8 +1,9 @@
-package com.memes.comment;
+package com.memes.comment.test;
 
 import com.github.javafaker.Faker;
+import com.memes.comment.Comment;
 import com.memes.comment.dto.SaveCommentDto;
-import com.memes.user.UserTestBuilder;
+import com.memes.user.test.UserTestBuilder;
 
 import java.util.Date;
 

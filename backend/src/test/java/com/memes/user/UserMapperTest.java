@@ -1,40 +1,51 @@
 package com.memes.user;
 
 import com.memes.user.dto.UserResponseDto;
-import org.assertj.core.api.SoftAssertions;
+import com.memes.user.test.UserTestBuilder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UserMapperTest {
 
   private final UserMapper userMapper = new UserMapperImpl();
 
-  @Test
-  void userToUserResponseDto_whenFilledUser_ReturnsStrippedDto() {
-    User user = UserTestBuilder.user().build();
+  @Nested
+  class UserToUserResponseDto {
 
-    UserResponseDto result = userMapper.userToUserResponseDto(user);
+    @Test
+    @DisplayName("Should map User to UserResponseDto and return result")
+    void mapsCorrectly() {
+      User user = UserTestBuilder.user().build();
 
-    SoftAssertions.assertSoftly(
-        softly -> {
-          softly.assertThat(result.getUsername()).isEqualTo(user.getUsername());
-          softly.assertThat(result.getEmail()).isEqualTo(user.getEmail());
-          softly.assertThat(result.getId()).isEqualTo(user.getId());
-        });
+      UserResponseDto actualResult = userMapper.userToUserResponseDto(user);
+
+      assertThat(actualResult)
+          .extracting("username", "email", "id")
+          .containsExactly(user.getUsername(), user.getEmail(), user.getId());
+    }
   }
 
-  @Test
-  void usersToUserResponseDtoList_whenFilledUserList_ReturnsUserResponseDtoList() {
-    List<User> users = UserTestBuilder.users(4);
+  @Nested
+  class usersToUserResponseDtoList {
 
-    List<UserResponseDto> result = userMapper.usersToUserResponseDtoList(users);
+    @Test
+    @DisplayName("Should map Users List to UsersResponseDto List and return result")
+    void mapsCorrectly() {
+      List<User> users = UserTestBuilder.users(4);
 
-    SoftAssertions.assertSoftly(
-        softly -> {
-          softly.assertThat(result).hasSize(4);
-          softly.assertThat(result.get(1).getEmail()).isEqualTo(users.get(1).getEmail());
-          softly.assertThat(result.get(2).getUsername()).isEqualTo(users.get(2).getUsername());
-        });
+      List<UserResponseDto> actualResult = userMapper.usersToUserResponseDtoList(users);
+
+      assertThat(actualResult)
+          .hasSize(4)
+          .element(2)
+          .extracting("username", "email", "id")
+          .containsExactly(
+              users.get(2).getUsername(), users.get(2).getEmail(), users.get(2).getId());
+    }
   }
 }
