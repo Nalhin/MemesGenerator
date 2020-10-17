@@ -1,64 +1,100 @@
 package com.memes.user;
 
-import com.memes.user.dto.UserResponseDto;
+import com.memes.test.annotations.IntegrationTest;
 import com.memes.user.test.UserTestBuilder;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
-import static com.memes.test.utils.AuthorizationUtils.authHeaders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.memes.test.utils.AuthorizationUtils.restAuthHeaders;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
-@Tag("IntegrationTest")
-@SpringBootTest
-@AutoConfigureMockMvc
+@IntegrationTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserIntegrationTest {
 
-  @Autowired private MockMvc mockMvc;
+  @LocalServerPort private int port;
 
   @Autowired private UserRepository userRepository;
 
-  @Autowired private UserMapper userMapper;
-
-  @Test
-  void getAll_UsersPresent_Returns200AndUsers() throws Exception {
-    List<User> users = UserTestBuilder.users(4);
-    userRepository.saveAll(users);
-    List<UserResponseDto> expected = userMapper.usersToUserResponseDtoList(users);
-
-    mockMvc
-        .perform(get("/users").contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsObjectAsJson(expected, UserResponseDto[].class));
+  @BeforeEach
+  void setup() {
+    RestAssured.port = port;
+    userRepository.deleteAll();
   }
 
-  @Test
-  void me_AuthenticatedUser_Returns200AndUserResponse() throws Exception {
-    User user = UserTestBuilder.user().build();
-    user = userRepository.save(user);
-    UserResponseDto expected = userMapper.userToUserResponseDto(user);
+  @Nested
+  class GetAll {
+    @Test
+    @DisplayName("Should return OK (200) status code and UserResponseDto List")
+    void returns200() {
+      List<User> expectedUsers = userRepository.saveAll(UserTestBuilder.users(4));
 
-    mockMvc
-        .perform(
-            get("/users/me")
-                .headers(authHeaders(user.getUsername()))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsObjectAsJson(expected, UserResponseDto.class));
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .when()
+          .get("/users")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.OK.value())
+          .and()
+          .body(
+              "content.size()",
+              equalTo(4),
+              "[0].id",
+              equalTo(expectedUsers.get(0).getId().intValue()),
+              "[1].username",
+              equalTo(expectedUsers.get(1).getUsername()),
+              "[2].email",
+              equalTo(expectedUsers.get(2).getEmail()));
+    }
   }
 
-  @Test
-  void me_UnauthenticatedUser_Returns403() throws Exception {
-    mockMvc
-        .perform(get("/users/me").contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isForbidden());
+  @Nested
+  class Me {
+    @Test
+    @DisplayName(
+        "Should return OK (200) status code and UserResponseDto when user is authenticated")
+    void returns200() {
+      User providedUser = userRepository.save(UserTestBuilder.user().build());
+
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .header(restAuthHeaders(providedUser.getUsername()))
+          .when()
+          .get("/users/me")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.OK.value())
+          .body(
+              "email",
+              equalTo(providedUser.getEmail()),
+              "username",
+              equalTo(providedUser.getUsername()),
+              "id",
+              equalTo(providedUser.getId().intValue()));
+    }
+
+    @Test
+    @DisplayName("Should return UNAUTHORIZED (403) status code when user is not authenticated")
+    void returns403() {
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .when()
+          .get("/users/me")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.FORBIDDEN.value());
+    }
   }
 }

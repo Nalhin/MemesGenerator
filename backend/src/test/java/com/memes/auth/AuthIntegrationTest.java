@@ -6,6 +6,7 @@ import com.memes.auth.test.AuthTestBuilder;
 import com.memes.user.UserRepository;
 import com.memes.user.test.UserTestBuilder;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Tag("IntegrationTest")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthIntegrationTest {
@@ -47,13 +49,11 @@ public class AuthIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(responseBody().containsValidJWT());
   }
+
   @Test
   void login_InvalidCredentials_Returns403() throws Exception {
     LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
-    userRepository.save(
-        UserTestBuilder.user()
-            .username(loginUserDto.getUsername())
-            .build());
+    userRepository.save(UserTestBuilder.user().username(loginUserDto.getUsername()).build());
 
     mockMvc
         .perform(
@@ -64,10 +64,7 @@ public class AuthIntegrationTest {
   }
 
   @Nested
-  class SignUp{
-    
-
-  }
+  class SignUp {}
 
   @Test
   void signUp_ValidInput_Returns200andUserWithToken() throws Exception {
@@ -89,12 +86,12 @@ public class AuthIntegrationTest {
     SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
 
     mockMvc
-            .perform(
-                    post("/auth/sign-up")
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(asJSON(signUpUserDto)))
-            .andExpect(status().isOk())
-            .andExpect(responseBody().containsValidJWT());
+        .perform(
+            post("/auth/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(signUpUserDto)))
+        .andExpect(status().isOk())
+        .andExpect(responseBody().containsValidJWT());
 
     assertThat(userRepository.findOneByUsername(signUpUserDto.getUsername())).isPresent();
   }
@@ -102,16 +99,13 @@ public class AuthIntegrationTest {
   @Test
   void signUp_EmailTaken_Returns409() throws Exception {
     SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
-    userRepository.save(
-            UserTestBuilder.user()
-                    .email(signUpUserDto.getEmail())
-                    .build());
+    userRepository.save(UserTestBuilder.user().email(signUpUserDto.getEmail()).build());
 
     mockMvc
-            .perform(
-                    post("/auth/sign-up")
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(asJSON(signUpUserDto)))
-            .andExpect(status().isConflict());
+        .perform(
+            post("/auth/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJSON(signUpUserDto)))
+        .andExpect(status().isConflict());
   }
 }
