@@ -27,6 +27,10 @@ public class UserIntegrationTest {
   @BeforeEach
   void setup() {
     RestAssured.port = port;
+  }
+
+  @AfterEach
+  void tearDown() {
     userRepository.deleteAll();
   }
 
@@ -75,6 +79,7 @@ public class UserIntegrationTest {
           .then()
           .assertThat()
           .statusCode(HttpStatus.OK.value())
+          .and()
           .body(
               "email",
               equalTo(providedUser.getEmail()),

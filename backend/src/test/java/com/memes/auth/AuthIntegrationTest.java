@@ -3,109 +3,126 @@ package com.memes.auth;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
 import com.memes.auth.test.AuthTestBuilder;
+import com.memes.test.annotations.IntegrationTest;
 import com.memes.user.UserRepository;
 import com.memes.user.test.UserTestBuilder;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
 import static com.memes.test.utils.RequestUtils.asJSON;
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Tag("IntegrationTest")
-@SpringBootTest
-@AutoConfigureMockMvc
+@IntegrationTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthIntegrationTest {
 
-  @Autowired private MockMvc mockMvc;
+  @LocalServerPort private int port;
 
   @Autowired private UserRepository userRepository;
-
   @Autowired private PasswordEncoder passwordEncoder;
 
-  @Test
-  void login_ValidCredentials_Returns200AndUserWithToken() throws Exception {
-    LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
-    userRepository.save(
-        UserTestBuilder.user()
-            .username(loginUserDto.getUsername())
-            .password(passwordEncoder.encode(loginUserDto.getPassword()))
-            .build());
-
-    mockMvc
-        .perform(
-            post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(loginUserDto)))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsValidJWT());
+  @BeforeEach
+  void setup() {
+    RestAssured.port = port;
   }
 
-  @Test
-  void login_InvalidCredentials_Returns403() throws Exception {
-    LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
-    userRepository.save(UserTestBuilder.user().username(loginUserDto.getUsername()).build());
-
-    mockMvc
-        .perform(
-            post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(loginUserDto)))
-        .andExpect(status().isForbidden());
+  @AfterEach
+  void tearDown() {
+    userRepository.deleteAll();
   }
 
   @Nested
-  class SignUp {}
+  class Login {
 
-  @Test
-  void signUp_ValidInput_Returns200andUserWithToken() throws Exception {
-    SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
+    @Test
+    @DisplayName("Should return OK (200) status code and AuthResponseDto")
+    void returns200() {
+      LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
+      userRepository.save(
+          UserTestBuilder.user()
+              .username(loginUserDto.getUsername())
+              .password(passwordEncoder.encode(loginUserDto.getPassword()))
+              .build());
 
-    mockMvc
-        .perform(
-            post("/auth/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(signUpUserDto)))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsValidJWT());
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .body(loginUserDto)
+          .when()
+          .post("/auth/login")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.OK.value())
+          .and()
+          .body("token", notNullValue());
+    }
 
-    assertThat(userRepository.findOneByUsername(signUpUserDto.getUsername())).isPresent();
+    @Test
+    @DisplayName("Should return FORBIDDEN (403) status code when invalid credentials are provided")
+    void returns403() {
+      LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
+      userRepository.save(UserTestBuilder.user().username(loginUserDto.getUsername()).build());
+
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .body(loginUserDto)
+          .when()
+          .post("/auth/login")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.FORBIDDEN.value());
+    }
   }
 
-  @Test
-  void signUp_UsernameTaken_Returns200andUserWithToken() throws Exception {
-    SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
+  @Nested
+  class SignUp {
 
-    mockMvc
-        .perform(
-            post("/auth/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(signUpUserDto)))
-        .andExpect(status().isOk())
-        .andExpect(responseBody().containsValidJWT());
+    @Test
+    @DisplayName("Should return OK (200) status code and AuthResponseDto")
+    void returns200() {
+      SignUpUserDto requestBody = AuthTestBuilder.signUpUserDto().build();
 
-    assertThat(userRepository.findOneByUsername(signUpUserDto.getUsername())).isPresent();
-  }
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .body(requestBody)
+          .when()
+          .post("/auth/sign-up")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.OK.value())
+          .and()
+          .body("user.username", equalTo(requestBody.getUsername()), "token", notNullValue());
+    }
 
-  @Test
-  void signUp_EmailTaken_Returns409() throws Exception {
-    SignUpUserDto signUpUserDto = AuthTestBuilder.signUpUserDto().build();
-    userRepository.save(UserTestBuilder.user().email(signUpUserDto.getEmail()).build());
+    @Test
+    @DisplayName("Should return CONFLICT (409) status code when email is taken")
+    void returns409() {
+      SignUpUserDto requestBody = AuthTestBuilder.signUpUserDto().build();
+      userRepository.save(UserTestBuilder.user().email(requestBody.getEmail()).build());
 
-    mockMvc
-        .perform(
-            post("/auth/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(asJSON(signUpUserDto)))
-        .andExpect(status().isConflict());
+      given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .accept(MediaType.APPLICATION_JSON_VALUE)
+          .body(requestBody)
+          .when()
+          .post("/auth/sign-up")
+          .then()
+          .assertThat()
+          .statusCode(HttpStatus.CONFLICT.value());
+    }
   }
 }

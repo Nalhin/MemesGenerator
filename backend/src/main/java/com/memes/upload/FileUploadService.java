@@ -12,6 +12,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Service
 public class FileUploadService {
 
@@ -28,20 +30,14 @@ public class FileUploadService {
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     try {
       ByteArrayResource contentsAsResource =
-          new ByteArrayResource(file.getBytes()) {
-            @Override
-            public String getFilename() {
-              return fileName;
-            }
-          };
+          new FileNameAwareByteArrayResource(file.getBytes(), fileName);
       body.add("image", contentsAsResource);
-    } catch (Exception ignored) {
+    } catch (IOException exception) {
+      throw new ImageNotSavedException();
     }
 
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body);
-
     ResponseEntity<String> response =
-        restTemplate.postForEntity(fileUploadUrl, requestEntity, String.class);
+        restTemplate.postForEntity(fileUploadUrl, new HttpEntity<>(body), String.class);
 
     if (!response.getStatusCode().is2xxSuccessful()) {
       throw new ImageNotSavedException();
