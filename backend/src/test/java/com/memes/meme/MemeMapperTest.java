@@ -6,24 +6,28 @@ import com.memes.template.test.TemplateTestBuilder;
 import com.memes.user.UserMapperImpl;
 import com.memes.user.test.UserTestBuilder;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {MemeMapperImpl.class, UserMapperImpl.class})
-@TestPropertySource(properties = "images.url-prefix=prefix")
 class MemeMapperTest {
 
   private final String PREFIX = "prefix";
-  @Autowired MemeMapper memeMapper;
+  private MemeMapper memeMapper;
+
+  @BeforeEach
+  void setUp() {
+    this.memeMapper = new MemeMapperImpl(new UserMapperImpl());
+    memeMapper.setImageUrlPrefix(PREFIX);
+  }
 
   @Nested
   class MemeToMemeResponseDto {
@@ -31,6 +35,7 @@ class MemeMapperTest {
     @Test
     @DisplayName("Should map Meme to MemeResponseDto")
     void mapsToDto() {
+
       Meme providedMeme =
           MemeTestBuilder.meme()
               .author(UserTestBuilder.user().build())

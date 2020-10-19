@@ -17,12 +17,14 @@ import java.io.IOException;
 @Service
 public class FileUploadService {
 
-  @Value("${images.upload-url}")
-  private String fileUploadUrl;
+  private final String fileUploadUrl;
 
   private final RestTemplate restTemplate;
 
-  public FileUploadService(RestTemplateBuilder restTemplateBuilder) {
+  public FileUploadService(
+      RestTemplateBuilder restTemplateBuilder,
+      @Value("${images.upload-url}") String fileUploadUrl) {
+    this.fileUploadUrl = fileUploadUrl;
     this.restTemplate = restTemplateBuilder.build();
   }
 
