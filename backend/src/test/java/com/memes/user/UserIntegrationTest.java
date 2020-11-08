@@ -1,8 +1,9 @@
 package com.memes.user;
 
 import com.memes.test.annotations.IntegrationTest;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +13,7 @@ import org.springframework.http.MediaType;
 
 import java.util.List;
 
-import static com.memes.test.utils.AuthorizationUtils.restAuthHeaders;
+import static com.memes.test.utils.AuthorizationUtils.authHeaders;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -24,9 +25,15 @@ public class UserIntegrationTest {
 
   @Autowired private UserRepository userRepository;
 
+  private RequestSpecification restClient;
+
   @BeforeEach
   void setup() {
-    RestAssured.port = port;
+    restClient =
+        RestAssured.given()
+            .port(port)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   @AfterEach
@@ -39,11 +46,9 @@ public class UserIntegrationTest {
     @Test
     @DisplayName("Should return OK (200) status code and UserResponseDto List")
     void returns200() {
-      List<User> expectedUsers = userRepository.saveAll(UserTestBuilder.users(4));
+      List<User> expectedUsers = userRepository.saveAll(UserTestFactory.users(4));
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
           .when()
           .get("/users")
           .then()
@@ -68,12 +73,11 @@ public class UserIntegrationTest {
     @DisplayName(
         "Should return OK (200) status code and UserResponseDto when user is authenticated")
     void returns200() {
-      User providedUser = userRepository.save(UserTestBuilder.user().build());
+      User providedUser = userRepository.save(UserTestFactory.user().build());
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
-          .header(restAuthHeaders(providedUser.getUsername()))
+      restClient
+          .given()
+          .header(authHeaders(providedUser.getUsername()))
           .when()
           .get("/users/me")
           .then()
@@ -92,9 +96,7 @@ public class UserIntegrationTest {
     @Test
     @DisplayName("Should return UNAUTHORIZED (403) status code when user is not authenticated")
     void returns403() {
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
           .when()
           .get("/users/me")
           .then()

@@ -1,8 +1,8 @@
 package com.memes.config;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.memes.auth.models.AuthenticatedUser;
-import com.memes.shared.dto.UnauthorizedExceptionDto;
+import com.memes.security.model.AuthenticatedUser;
+import com.memes.common.dto.UnauthorizedExceptionDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +38,7 @@ public class SwaggerConfig {
   private ApiInfo metadata() {
     return new ApiInfoBuilder()
         .title("Memes")
-        .description("Memes rest api")
+        .description("Memes App REST API")
         .version("1.0.0")
         .license("MIT License")
         .build();

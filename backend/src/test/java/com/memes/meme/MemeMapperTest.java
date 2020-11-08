@@ -1,20 +1,12 @@
 package com.memes.meme;
 
 import com.memes.meme.dto.MemeResponseDto;
-import com.memes.meme.test.MemeTestBuilder;
-import com.memes.template.test.TemplateTestBuilder;
+import com.memes.meme.test.MemeTestFactory;
+import com.memes.template.test.TemplateTestFactory;
 import com.memes.user.UserMapperImpl;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,9 +29,9 @@ class MemeMapperTest {
     void mapsToDto() {
 
       Meme providedMeme =
-          MemeTestBuilder.meme()
-              .author(UserTestBuilder.user().build())
-              .template(TemplateTestBuilder.template().build())
+          MemeTestFactory.meme()
+              .author(UserTestFactory.user().build())
+              .template(TemplateTestFactory.template().build())
               .build();
 
       MemeResponseDto actualResult = memeMapper.memeToMemeResponseDto(providedMeme);
@@ -60,7 +52,7 @@ class MemeMapperTest {
     @Test
     @DisplayName("Should prefix filename with string provided as a property source")
     void addsPrefix() {
-      Meme providedMeme = MemeTestBuilder.meme().build();
+      Meme providedMeme = MemeTestFactory.meme().build();
 
       MemeResponseDto actualResult = memeMapper.memeToMemeResponseDto(providedMeme);
 

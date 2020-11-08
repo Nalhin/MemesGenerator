@@ -4,7 +4,7 @@ import com.memes.test.auth.WithMockAnonymousUser;
 import com.memes.test.auth.WithMockAuthenticatedUser;
 import com.memes.test.utils.MockSecurityConfig;
 import com.memes.user.dto.UserResponseDto;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class UserControllerTest extends MockSecurityConfig {
     @Test
     @DisplayName("Should return OK (200) status code and UserResponseDto List")
     void usersPresent() throws Exception {
-      List<User> mockUsers = UserTestBuilder.users(4);
+      List<User> mockUsers = UserTestFactory.users(4);
       List<UserResponseDto> expectedResult = userMapper.usersToUserResponseDtoList(mockUsers);
       when(userService.findAll()).thenReturn(mockUsers);
 

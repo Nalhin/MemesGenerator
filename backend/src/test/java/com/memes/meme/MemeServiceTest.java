@@ -1,13 +1,10 @@
 package com.memes.meme;
 
-import com.memes.auth.models.AnonymousUser;
-import com.memes.auth.models.AuthenticatedUser;
-import com.memes.auth.test.AuthTestBuilder;
 import com.memes.meme.dto.SaveMemeDto;
-import com.memes.meme.test.MemeTestBuilder;
+import com.memes.meme.test.MemeTestFactory;
 import com.memes.template.Template;
 import com.memes.template.TemplateRepository;
-import com.memes.template.test.TemplateTestBuilder;
+import com.memes.template.test.TemplateTestFactory;
 import com.memes.upload.FileUploadService;
 import com.memes.upload.exceptions.ImageNotSavedException;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +46,7 @@ class MemeServiceTest {
     @Test
     @DisplayName("Should return template when found")
     void returnsTemplate() {
-      Meme expectedMeme = MemeTestBuilder.meme().build();
+      Meme expectedMeme = MemeTestFactory.meme().build();
       when(memeRepository.findById(anyLong())).thenReturn(Optional.of(expectedMeme));
 
       Meme actualMeme = memeService.getOneById(expectedMeme.getId());
@@ -73,7 +70,7 @@ class MemeServiceTest {
     @Test
     @DisplayName("Should query and return paginated Memes")
     void returnsMemes() {
-      Page<Meme> expectedPage = new PageImpl<>(MemeTestBuilder.memes(4));
+      Page<Meme> expectedPage = new PageImpl<>(MemeTestFactory.memes(4));
       when(memeRepository.findAll(any(PageRequest.class))).thenReturn(expectedPage);
 
       Page<Meme> actualPage = memeService.findAll(1);
@@ -89,27 +86,24 @@ class MemeServiceTest {
     @DisplayName("Should set template, user and persist meme")
     void persistsWithAuthenticated() {
       SaveMemeDto saveMemeDto = SaveMemeDto.builder().build();
-      AuthenticatedUser authUser = AuthTestBuilder.authUser().build();
-      Template template = TemplateTestBuilder.template().build();
+      Template template = TemplateTestFactory.template().build();
       when(templateRepository.getOne(saveMemeDto.getTemplateId())).thenReturn(template);
       when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
 
-      Meme actualMeme = memeService.save(saveMemeDto, file, authUser);
+      Meme actualMeme = memeService.save(saveMemeDto, file);
 
-      assertThat(actualMeme)
-          .extracting("author", "template")
-          .containsExactly(authUser.getPresentUser(), template);
+      assertThat(actualMeme.getTemplate()).isEqualTo(template);
     }
 
     @Test
     @DisplayName("Should set meme template, leave user empty if user is anonymous and persist meme")
     void setsTemplate() {
-      Template template = TemplateTestBuilder.template().build();
-      SaveMemeDto saveMemeDto = MemeTestBuilder.saveMemeDto().build();
+      Template template = TemplateTestFactory.template().build();
+      SaveMemeDto saveMemeDto = MemeTestFactory.saveMemeDto().build();
       when(templateRepository.getOne(saveMemeDto.getTemplateId())).thenReturn(template);
       when(memeRepository.save(any(Meme.class))).then(returnsFirstArg());
 
-      Meme actualMeme = memeService.save(saveMemeDto, file, new AnonymousUser());
+      Meme actualMeme = memeService.save(saveMemeDto, file);
 
       assertThat(actualMeme).extracting("template", "author").containsExactly(template, null);
     }
@@ -120,10 +114,7 @@ class MemeServiceTest {
       when(fileUploadService.uploadFile(any(MultipartFile.class), anyString()))
           .thenThrow(ImageNotSavedException.class);
 
-      assertThatThrownBy(
-              () ->
-                  memeService.save(
-                      MemeTestBuilder.saveMemeDto().build(), file, new AnonymousUser()))
+      assertThatThrownBy(() -> memeService.save(MemeTestFactory.saveMemeDto().build(), file))
           .isInstanceOf(ResponseStatusException.class);
     }
   }

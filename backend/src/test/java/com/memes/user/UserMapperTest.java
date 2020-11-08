@@ -1,7 +1,7 @@
 package com.memes.user;
 
 import com.memes.user.dto.UserResponseDto;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class UserMapperTest {
     @Test
     @DisplayName("Should map User to UserResponseDto and return result")
     void mapsCorrectly() {
-      User user = UserTestBuilder.user().build();
+      User user = UserTestFactory.user().build();
 
       UserResponseDto actualResult = userMapper.userToUserResponseDto(user);
 
@@ -36,7 +36,7 @@ class UserMapperTest {
     @Test
     @DisplayName("Should map Users List to UsersResponseDto List and return result")
     void mapsCorrectly() {
-      List<User> users = UserTestBuilder.users(4);
+      List<User> users = UserTestFactory.users(4);
 
       List<UserResponseDto> actualResult = userMapper.usersToUserResponseDtoList(users);
 

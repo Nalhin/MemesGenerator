@@ -1,6 +1,8 @@
 package com.memes.auth;
 
-import com.memes.auth.models.AuthenticatedUser;
+import com.memes.security.model.AuthenticatedUser;
+import com.memes.jwt.JwtService;
+import com.memes.jwt.model.JwtPayload;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +24,15 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
 
-  public Pair<User, String> login(String username, String password) {
+  public Pair<User, JwtPayload> login(String username, String password) {
     Authentication auth =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(username, password));
-    User user = ((AuthenticatedUser) auth.getPrincipal()).getPresentUser();
+    User user = ((AuthenticatedUser) auth.getPrincipal()).getUser();
     return Pair.of(user, jwtService.sign(user.getUsername()));
   }
 
-  public Pair<User, String> signUp(User user) {
+  public Pair<User, JwtPayload> signUp(User user) {
     if (userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username or email is already taken");
     }

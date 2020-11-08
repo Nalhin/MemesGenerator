@@ -3,6 +3,7 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
+import com.memes.jwt.model.JwtPayload;
 import com.memes.user.User;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,17 @@ public class AuthController {
   @PostMapping(path = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginUserDto loginUserDto) {
 
-    Pair<User, String> result =
+    Pair<User, JwtPayload> result =
         authService.login(loginUserDto.getUsername(), loginUserDto.getPassword());
 
-    return ResponseEntity.ok(authMapper.authPairToUserResponseDto(result));
+    return ResponseEntity.ok(authMapper.authPairToResponse(result));
   }
 
   @PostMapping(path = "/auth/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthResponseDto> signUp(@Valid @RequestBody SignUpUserDto signUpUserDto) {
 
-    Pair<User, String> result = authService.signUp(authMapper.signUpUserDtoToUser(signUpUserDto));
+    Pair<User, JwtPayload> result = authService.signUp(authMapper.signUpUserDtoToUser(signUpUserDto));
 
-    return ResponseEntity.ok(authMapper.authPairToUserResponseDto(result));
+    return ResponseEntity.ok(authMapper.authPairToResponse(result));
   }
 }

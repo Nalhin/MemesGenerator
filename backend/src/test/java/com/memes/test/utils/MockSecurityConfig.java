@@ -1,7 +1,8 @@
 package com.memes.test.utils;
 
-import com.memes.auth.JwtService;
-import com.memes.auth.SecurityContextFacade;
+import com.memes.jwt.JwtService;
+import com.memes.security.BearerHeaderTokenResolver;
+import com.memes.security.SecurityContextFacadeImpl;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,5 +18,9 @@ public abstract class MockSecurityConfig {
   @MockBean protected JwtService jwtService;
 
   /** Mocked bean because it's a dependency of the SecurityConfiguration */
-  @MockBean SecurityContextFacade securityContextFacade;
+  @MockBean
+  SecurityContextFacadeImpl securityContextFacade;
+
+  @MockBean
+  BearerHeaderTokenResolver bearerTokenHeaderResolver;
 }

@@ -6,9 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -21,9 +22,9 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne @JoinColumn private User author;
+  @CreatedBy @ManyToOne @JoinColumn private User author;
 
-  @CreationTimestamp private Date created;
+  @CreationTimestamp private LocalDate created;
 
   private String content;
 }

@@ -2,7 +2,7 @@ package com.memes.comment;
 
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
-import com.memes.comment.test.CommentTestBuilder;
+import com.memes.comment.test.CommentTestFactory;
 import com.memes.user.UserMapperImpl;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ public class CommentMapperTest {
     @Test
     @DisplayName("Should map Comment to CommentResponseDto")
     void mapsToDto() {
-      Comment comment = CommentTestBuilder.commentWithAuthor().build();
+      Comment comment = CommentTestFactory.commentWithAuthor().build();
 
       CommentResponseDto result = commentMapper.commentToCommentResponseDto(comment);
 
@@ -43,7 +43,7 @@ public class CommentMapperTest {
     @Test
     @DisplayName("Should map SaveCommentDto to Comment")
     void mapsFromDto() {
-      SaveCommentDto providedDto = CommentTestBuilder.saveCommentDto().build();
+      SaveCommentDto providedDto = CommentTestFactory.saveCommentDto().build();
 
       Comment actualComment = commentMapper.saveCommentDtoToComment(providedDto);
 

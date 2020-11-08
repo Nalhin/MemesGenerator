@@ -2,7 +2,8 @@ package com.memes.auth;
 
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.SignUpUserDto;
-import com.memes.auth.test.AuthTestBuilder;
+import com.memes.auth.test.AuthTestFactory;
+import com.memes.jwt.model.JwtPayload;
 import com.memes.user.User;
 import com.memes.user.UserMapperImpl;
 import org.assertj.core.api.SoftAssertions;
@@ -21,8 +22,8 @@ class AuthMapperTest {
     @Test
     @DisplayName("Should map AuthPair to AuthResponseDto")
     void mapsToDto() {
-      Pair<User, String> providedAuthPair = AuthTestBuilder.authPair();
-      AuthResponseDto actualResult = authMapper.authPairToUserResponseDto(providedAuthPair);
+      Pair<User, JwtPayload> providedAuthPair = AuthTestFactory.authPair();
+      AuthResponseDto actualResult = authMapper.authPairToResponse(providedAuthPair);
 
       SoftAssertions.assertSoftly(
           softly -> {
@@ -32,7 +33,7 @@ class AuthMapperTest {
             softly
                 .assertThat(actualResult.getUser().getEmail())
                 .isEqualTo(providedAuthPair.getFirst().getEmail());
-            softly.assertThat(actualResult.getToken()).isEqualTo(providedAuthPair.getSecond());
+            softly.assertThat(actualResult.getPayload()).isEqualTo(providedAuthPair.getSecond());
           });
     }
   }
@@ -43,7 +44,7 @@ class AuthMapperTest {
     @Test
     @DisplayName("Should map SignUpUserDto to User")
     void mapsToEntity() {
-      SignUpUserDto providedSignUpUserDto = AuthTestBuilder.signUpUserDto().build();
+      SignUpUserDto providedSignUpUserDto = AuthTestFactory.signUpUserDto().build();
 
       User actualResult = authMapper.signUpUserDtoToUser(providedSignUpUserDto);
 

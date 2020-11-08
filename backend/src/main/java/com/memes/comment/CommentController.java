@@ -1,10 +1,10 @@
 package com.memes.comment;
 
-import com.memes.auth.models.AuthenticatedUser;
+import com.memes.security.model.AuthenticatedUser;
 import com.memes.comment.dto.CommentResponseDto;
 import com.memes.comment.dto.SaveCommentDto;
-import com.memes.shared.annotations.Authenticated;
-import com.memes.shared.annotations.CurrentUser;
+import com.memes.common.annotations.Authenticated;
+import com.memes.common.annotations.CurrentUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +36,10 @@ public class CommentController {
   @PostMapping(path = "/comments", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Save comment")
   public ResponseEntity<CommentResponseDto> saveComment(
-      @Valid @RequestBody SaveCommentDto saveCommentDto, @CurrentUser AuthenticatedUser user) {
+      @Valid @RequestBody SaveCommentDto saveCommentDto) {
 
     Comment savedComment =
-        this.commentService.saveComment(
-            commentMapper.saveCommentDtoToComment(saveCommentDto), user);
+        this.commentService.saveComment(commentMapper.saveCommentDtoToComment(saveCommentDto));
 
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()

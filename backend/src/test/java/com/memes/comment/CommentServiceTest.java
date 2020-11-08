@@ -1,7 +1,6 @@
 package com.memes.comment;
 
-import com.memes.auth.test.AuthTestBuilder;
-import com.memes.comment.test.CommentTestBuilder;
+import com.memes.comment.test.CommentTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ class CommentServiceTest {
     @Test
     @DisplayName("Should return comment when found")
     void returnsComment() {
-      Comment expectedComment = CommentTestBuilder.comment().build();
+      Comment expectedComment = CommentTestFactory.comment().build();
       when(commentRepository.findById(expectedComment.getId()))
           .thenReturn(Optional.of(expectedComment));
 
@@ -55,11 +54,10 @@ class CommentServiceTest {
     @Test
     @DisplayName("Should save and return saved comment")
     void returnsComment() {
-      Comment expectedComment = CommentTestBuilder.comment().build();
+      Comment expectedComment = CommentTestFactory.comment().build();
       when(commentRepository.save(any(Comment.class))).then(returnsFirstArg());
 
-      Comment actualComment =
-          commentService.saveComment(expectedComment, AuthTestBuilder.authUser().build());
+      Comment actualComment = commentService.saveComment(expectedComment);
 
       assertThat(actualComment).isEqualTo(expectedComment);
     }

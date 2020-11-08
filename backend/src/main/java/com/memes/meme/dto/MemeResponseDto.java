@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -16,7 +16,7 @@ import java.util.Date;
 public class MemeResponseDto {
   private Long id;
   private UserResponseDto author;
-  private Date created;
+  private LocalDate created;
   private String url;
   private TemplateResponseDto template;
 }

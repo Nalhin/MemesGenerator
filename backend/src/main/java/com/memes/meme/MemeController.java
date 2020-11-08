@@ -1,9 +1,7 @@
 package com.memes.meme;
 
-import com.memes.auth.models.AuthUser;
 import com.memes.meme.dto.MemeResponseDto;
 import com.memes.meme.dto.SaveMemeDto;
-import com.memes.shared.annotations.CurrentUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +40,9 @@ public class MemeController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "Save meme")
   public ResponseEntity<MemeResponseDto> save(
-      @RequestPart SaveMemeDto saveMemeDto,
-      @RequestPart MultipartFile file,
-      @CurrentUser AuthUser authUser) {
+      @RequestPart SaveMemeDto saveMemeDto, @RequestPart MultipartFile file) {
 
-    Meme savedMeme = memeService.save(saveMemeDto, file, authUser);
+    Meme savedMeme = memeService.save(saveMemeDto, file);
 
     return ResponseEntity.created(URI.create("/" + savedMeme.getId()))
         .body(memeMapper.memeToMemeResponseDto(savedMeme));

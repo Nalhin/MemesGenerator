@@ -1,12 +1,13 @@
 package com.memes.comment;
 
 import com.memes.comment.dto.SaveCommentDto;
-import com.memes.comment.test.CommentTestBuilder;
+import com.memes.comment.test.CommentTestFactory;
 import com.memes.test.annotations.IntegrationTest;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static com.memes.test.utils.AuthorizationUtils.restAuthHeaders;
+import static com.memes.test.utils.AuthorizationUtils.authHeaders;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -29,9 +30,15 @@ public class CommentIntegrationTest {
 
   @LocalServerPort private int port;
 
+  private RequestSpecification restClient;
+
   @BeforeEach
   void setup() {
-    RestAssured.port = port;
+    restClient =
+        RestAssured.given()
+            .port(port)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   @AfterEach
@@ -48,13 +55,11 @@ public class CommentIntegrationTest {
     void returns200() {
       Comment savedComment =
           commentRepository.save(
-              CommentTestBuilder.comment()
-                  .author(userRepository.save(UserTestBuilder.user().build()))
+              CommentTestFactory.comment()
+                  .author(userRepository.save(UserTestFactory.user().build()))
                   .build());
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
           .when()
           .get("/comments/" + savedComment.getId())
           .then()
@@ -78,13 +83,11 @@ public class CommentIntegrationTest {
     @DisplayName(
         "Should return CREATED (201) status code and CommentResponseDto when user is authenticated")
     void returns201() {
-      User author = userRepository.save(UserTestBuilder.user().build());
-      SaveCommentDto comment = CommentTestBuilder.saveCommentDto().build();
+      User author = userRepository.save(UserTestFactory.user().build());
+      SaveCommentDto comment = CommentTestFactory.saveCommentDto().build();
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
-          .header(restAuthHeaders(author.getUsername()))
+      restClient
+          .header(authHeaders(author.getUsername()))
           .body(comment)
           .when()
           .post("/comments")
@@ -92,13 +95,7 @@ public class CommentIntegrationTest {
           .assertThat()
           .statusCode(HttpStatus.CREATED.value())
           .and()
-          .body(
-              "content",
-              equalTo(comment.getContent()),
-              "author.username",
-              equalTo(author.getUsername()),
-              "id",
-              notNullValue());
+          .body("content", equalTo(comment.getContent()), "id", notNullValue());
     }
   }
 }

@@ -13,7 +13,5 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class SaveCommentDto {
 
-    @NotNull
-    private String content;
-
+  @NotNull private String content;
 }

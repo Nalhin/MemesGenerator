@@ -1,8 +1,8 @@
 package com.memes.user;
 
-import com.memes.auth.models.AuthenticatedUser;
-import com.memes.shared.annotations.Authenticated;
-import com.memes.shared.annotations.CurrentUser;
+import com.memes.security.model.AuthenticatedUser;
+import com.memes.common.annotations.Authenticated;
+import com.memes.common.annotations.CurrentUser;
 import com.memes.user.dto.UserResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +34,6 @@ public class UserController {
   @ApiResponses(@ApiResponse(responseCode = "200", description = "Get currently logged user"))
   @Authenticated
   public ResponseEntity<UserResponseDto> me(@CurrentUser AuthenticatedUser authUser) {
-    return ResponseEntity.ok(userMapper.userToUserResponseDto(authUser.getPresentUser()));
+    return ResponseEntity.ok(userMapper.userToUserResponseDto(authUser.getUser()));
   }
 }

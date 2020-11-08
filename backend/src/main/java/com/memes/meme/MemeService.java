@@ -1,6 +1,5 @@
 package com.memes.meme;
 
-import com.memes.auth.models.AuthUser;
 import com.memes.meme.dto.SaveMemeDto;
 import com.memes.template.TemplateRepository;
 import com.memes.upload.FileUploadService;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,9 +32,8 @@ public class MemeService {
     return memeRepository.findAll(PageRequest.of(currentPage, 10));
   }
 
-  public Meme save(SaveMemeDto saveMemeDto, MultipartFile file, AuthUser authUser) {
+  public Meme save(SaveMemeDto saveMemeDto, MultipartFile file) {
     Meme meme = new Meme();
-    authUser.getUser().ifPresent(meme::setAuthor);
     meme.setTemplate(templateRepository.getOne(saveMemeDto.getTemplateId()));
     try {
       String uploadUrl = fileUploadService.uploadFile(file, UUID.randomUUID().toString() + ".jpg");

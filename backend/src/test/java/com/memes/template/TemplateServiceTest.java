@@ -1,6 +1,6 @@
 package com.memes.template;
 
-import com.memes.template.test.TemplateTestBuilder;
+import com.memes.template.test.TemplateTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class TemplateServiceTest {
     @Test
     @DisplayName("Should return template when found")
     void returnsTemplate() {
-      Template expectedTemplate = TemplateTestBuilder.template().build();
+      Template expectedTemplate = TemplateTestFactory.template().build();
       when(templateRepository.findById(anyLong())).thenReturn(Optional.of(expectedTemplate));
 
       Template actualTemplate = templateService.getOneById(expectedTemplate.getId());
@@ -58,7 +58,7 @@ class TemplateServiceTest {
     @Test
     @DisplayName("Should query and return paginated templates")
     void returnsTemplates() {
-      Page<Template> expectedPage = new PageImpl<>(TemplateTestBuilder.templates(4));
+      Page<Template> expectedPage = new PageImpl<>(TemplateTestFactory.templates(4));
       when(templateRepository.findAll(any(PageRequest.class))).thenReturn(expectedPage);
 
       Page<Template> actualPage = templateService.findAll(1);
@@ -73,7 +73,7 @@ class TemplateServiceTest {
     @Test
     @DisplayName("Should save and return saved template")
     void savesTemplate() {
-      Template expectedTemplate = TemplateTestBuilder.template().build();
+      Template expectedTemplate = TemplateTestFactory.template().build();
       when(templateRepository.save(expectedTemplate)).then(returnsFirstArg());
 
       Template actualTemplate = templateService.save(expectedTemplate);

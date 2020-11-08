@@ -10,9 +10,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class LoginUserDto {
 
-    @NotNull
-    private String username;
+  @NotNull private String username;
 
-    @NotNull
-    private String password;
+  @NotNull private String password;
 }

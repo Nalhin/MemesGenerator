@@ -1,6 +1,6 @@
 package com.memes.user;
 
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return users if found")
     void returnsUsers() {
-      List<User> mockUsers = UserTestBuilder.users(4);
+      List<User> mockUsers = UserTestFactory.users(4);
       when(userRepository.findAll()).thenReturn(mockUsers);
 
       List<User> result = userService.findAll();
@@ -43,7 +43,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return user if user is found")
     void userFound() {
-      User expectedResult = UserTestBuilder.user().build();
+      User expectedResult = UserTestFactory.user().build();
       when(userRepository.findOneByUsername(expectedResult.getUsername()))
           .thenReturn(Optional.of(expectedResult));
 
@@ -55,7 +55,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return empty optional if user is not found")
     void userNotFound() {
-      User expectedResult = UserTestBuilder.user().build();
+      User expectedResult = UserTestFactory.user().build();
       when(userRepository.findOneByUsername(expectedResult.getUsername()))
           .thenReturn(Optional.empty());
 
@@ -71,7 +71,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should persist provided data")
     void savesUserData() {
-      User user = UserTestBuilder.user().build();
+      User user = UserTestFactory.user().build();
 
       userService.save(user);
 

@@ -1,9 +1,9 @@
 package com.memes.auth;
 
-import com.memes.auth.test.AuthTestBuilder;
+import com.memes.jwt.JwtService;
+import com.memes.jwt.model.JwtPayload;
 import com.memes.user.User;
 import com.memes.user.UserRepository;
-import com.memes.user.test.UserTestBuilder;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import static com.memes.jwt.test.JwtTestFactory.jwtPayload;
+import static com.memes.security.test.SecurityUserTestFactory.authentication;
+import static com.memes.user.test.UserTestFactory.user;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -34,26 +37,27 @@ class AuthServiceTest {
   @InjectMocks private AuthService authService;
 
   private User user;
-  private final String token = "token";
+  private JwtPayload jwtPayload;
 
   @BeforeEach
   void setUp() {
-    user = UserTestBuilder.user().build();
+    user = user().build();
+    jwtPayload = jwtPayload().build();
   }
 
   @Nested
   class Login {
 
     @Test
-    @DisplayName("Should authenticate user with valid credentials and return User and auth token")
+    @DisplayName(
+        "Should authenticate user with valid credentials and return User and auth jwtPayload")
     void validCredentials() {
-      when(jwtService.sign(user.getUsername())).thenReturn(token);
-      when(authenticationManager.authenticate(any()))
-          .thenReturn(AuthTestBuilder.authentication(user));
+      when(jwtService.sign(user.getUsername())).thenReturn(jwtPayload);
+      when(authenticationManager.authenticate(any())).thenReturn(authentication(user));
 
-      Pair<User, String> result = authService.login(user.getUsername(), user.getPassword());
+      Pair<User, JwtPayload> result = authService.login(user.getUsername(), user.getPassword());
 
-      assertThat(result.getSecond()).isEqualTo(token);
+      assertThat(result.getSecond()).isEqualTo(jwtPayload);
       verify(authenticationManager)
           .authenticate(
               new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
@@ -65,19 +69,19 @@ class AuthServiceTest {
 
     @Test
     @DisplayName(
-        "Should create user and return User and auth token when username and email are unique")
+        "Should create user and return User and auth jwtPayload when username and email are unique")
     void uniqueUser() {
-      when(jwtService.sign(user.getUsername())).thenReturn(token);
+      when(jwtService.sign(user.getUsername())).thenReturn(jwtPayload);
       when(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()))
           .thenReturn(false);
       when(userRepository.save(any())).thenReturn(user);
 
-      Pair<User, String> result = authService.signUp(user);
+      Pair<User, JwtPayload> result = authService.signUp(user);
 
       SoftAssertions.assertSoftly(
           softly -> {
             softly.assertThat(result.getFirst()).isEqualTo(user);
-            softly.assertThat(result.getSecond()).isEqualTo(token);
+            softly.assertThat(result.getSecond()).isEqualTo(jwtPayload);
           });
       verify(passwordEncoder, times(1)).encode(anyString());
       verify(userRepository, times(1)).save(any());

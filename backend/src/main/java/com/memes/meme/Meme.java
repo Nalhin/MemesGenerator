@@ -7,8 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -21,11 +23,11 @@ public class Meme {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne @JoinColumn private User author;
+  @CreatedBy @ManyToOne @JoinColumn private User author;
 
   @ManyToOne @JoinColumn private Template template;
 
   private String filename;
 
-  @CreationTimestamp private Date created;
+  @CreationTimestamp private LocalDate created;
 }

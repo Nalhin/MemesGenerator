@@ -2,11 +2,12 @@ package com.memes.auth;
 
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
-import com.memes.auth.test.AuthTestBuilder;
+import com.memes.auth.test.AuthTestFactory;
 import com.memes.test.annotations.IntegrationTest;
 import com.memes.user.UserRepository;
-import com.memes.user.test.UserTestBuilder;
+import com.memes.user.test.UserTestFactory;
 import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.memes.test.matchers.ResponseBodyMatchers.responseBody;
-import static com.memes.test.utils.RequestUtils.asJSON;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,9 +31,15 @@ public class AuthIntegrationTest {
   @Autowired private UserRepository userRepository;
   @Autowired private PasswordEncoder passwordEncoder;
 
+  private RequestSpecification restClient;
+
   @BeforeEach
   void setup() {
-    RestAssured.port = port;
+    restClient =
+        RestAssured.given()
+            .port(port)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   @AfterEach
@@ -49,16 +53,15 @@ public class AuthIntegrationTest {
     @Test
     @DisplayName("Should return OK (200) status code and AuthResponseDto")
     void returns200() {
-      LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
+      LoginUserDto loginUserDto = AuthTestFactory.loginUserDto().build();
       userRepository.save(
-          UserTestBuilder.user()
+          UserTestFactory.user()
               .username(loginUserDto.getUsername())
               .password(passwordEncoder.encode(loginUserDto.getPassword()))
               .build());
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
+          .given()
           .body(loginUserDto)
           .when()
           .post("/auth/login")
@@ -66,18 +69,16 @@ public class AuthIntegrationTest {
           .assertThat()
           .statusCode(HttpStatus.OK.value())
           .and()
-          .body("token", notNullValue());
+          .body("payload.accessToken", notNullValue());
     }
 
     @Test
     @DisplayName("Should return FORBIDDEN (403) status code when invalid credentials are provided")
     void returns403() {
-      LoginUserDto loginUserDto = AuthTestBuilder.loginUserDto().build();
-      userRepository.save(UserTestBuilder.user().username(loginUserDto.getUsername()).build());
+      LoginUserDto loginUserDto = AuthTestFactory.loginUserDto().build();
+      userRepository.save(UserTestFactory.user().username(loginUserDto.getUsername()).build());
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
           .body(loginUserDto)
           .when()
           .post("/auth/login")
@@ -93,11 +94,10 @@ public class AuthIntegrationTest {
     @Test
     @DisplayName("Should return OK (200) status code and AuthResponseDto")
     void returns200() {
-      SignUpUserDto requestBody = AuthTestBuilder.signUpUserDto().build();
+      SignUpUserDto requestBody = AuthTestFactory.signUpUserDto().build();
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
+          .given()
           .body(requestBody)
           .when()
           .post("/auth/sign-up")
@@ -105,18 +105,21 @@ public class AuthIntegrationTest {
           .assertThat()
           .statusCode(HttpStatus.OK.value())
           .and()
-          .body("user.username", equalTo(requestBody.getUsername()), "token", notNullValue());
+          .body(
+              "user.username",
+              equalTo(requestBody.getUsername()),
+              "payload.accessToken",
+              notNullValue());
     }
 
     @Test
     @DisplayName("Should return CONFLICT (409) status code when email is taken")
     void returns409() {
-      SignUpUserDto requestBody = AuthTestBuilder.signUpUserDto().build();
-      userRepository.save(UserTestBuilder.user().email(requestBody.getEmail()).build());
+      SignUpUserDto requestBody = AuthTestFactory.signUpUserDto().build();
+      userRepository.save(UserTestFactory.user().email(requestBody.getEmail()).build());
 
-      given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .accept(MediaType.APPLICATION_JSON_VALUE)
+      restClient
+          .given()
           .body(requestBody)
           .when()
           .post("/auth/sign-up")

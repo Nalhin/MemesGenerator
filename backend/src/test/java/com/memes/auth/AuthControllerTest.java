@@ -3,7 +3,9 @@ package com.memes.auth;
 import com.memes.auth.dto.AuthResponseDto;
 import com.memes.auth.dto.LoginUserDto;
 import com.memes.auth.dto.SignUpUserDto;
-import com.memes.auth.test.AuthTestBuilder;
+import com.memes.auth.test.AuthTestFactory;
+import com.memes.jwt.model.JwtPayload;
+import com.memes.jwt.test.JwtTestFactory;
 import com.memes.test.utils.MockSecurityConfig;
 import com.memes.user.User;
 import com.memes.user.UserMapperImpl;
@@ -43,8 +45,8 @@ class AuthControllerTest extends MockSecurityConfig {
     @Test
     @DisplayName("Should return OK (200) status code and AuthResponseDto")
     void returns200() throws Exception {
-      LoginUserDto providedRequestBody = AuthTestBuilder.loginUserDto().build();
-      Pair<User, String> serviceReturn = AuthTestBuilder.authPair();
+      LoginUserDto providedRequestBody = AuthTestFactory.loginUserDto().build();
+      Pair<User, JwtPayload> serviceReturn = AuthTestFactory.authPair();
       when(authService.login(providedRequestBody.getUsername(), providedRequestBody.getPassword()))
           .thenReturn(serviceReturn);
 
@@ -57,7 +59,7 @@ class AuthControllerTest extends MockSecurityConfig {
           .andExpect(
               responseBody()
                   .containsObjectAsJson(
-                      authMapper.authPairToUserResponseDto(serviceReturn), AuthResponseDto.class));
+                      authMapper.authPairToResponse(serviceReturn), AuthResponseDto.class));
     }
 
     @Test
@@ -65,7 +67,7 @@ class AuthControllerTest extends MockSecurityConfig {
         "Should return BAD_REQUEST (400) status code and validation errors when request body is invalid")
     void returns403() throws Exception {
       LoginUserDto providedRequestBody =
-          AuthTestBuilder.loginUserDto().password(null).username(null).build();
+          AuthTestFactory.loginUserDto().password(null).username(null).build();
 
       mockMvc
           .perform(
@@ -83,8 +85,8 @@ class AuthControllerTest extends MockSecurityConfig {
     @Test
     @DisplayName("Should return OK (200) status code and AuthResponseDto")
     void returns200() throws Exception {
-      SignUpUserDto providedRequestBody = AuthTestBuilder.signUpUserDto().build();
-      Pair<User, String> serviceResult = AuthTestBuilder.authPair();
+      SignUpUserDto providedRequestBody = AuthTestFactory.signUpUserDto().build();
+      Pair<User, JwtPayload> serviceResult = AuthTestFactory.authPair();
       when(authService.signUp(authMapper.signUpUserDtoToUser(providedRequestBody)))
           .thenReturn(serviceResult);
 
@@ -97,7 +99,7 @@ class AuthControllerTest extends MockSecurityConfig {
           .andExpect(
               responseBody()
                   .containsObjectAsJson(
-                      authMapper.authPairToUserResponseDto(serviceResult), AuthResponseDto.class));
+                      authMapper.authPairToResponse(serviceResult), AuthResponseDto.class));
 
       verify(authService, times(1)).signUp(any(User.class));
     }
